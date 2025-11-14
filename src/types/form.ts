@@ -32,6 +32,7 @@ export interface IntroForgeFormData {
   company: string;
   recipient: string;
   messageType: string;
+  additionalContext?: string;
 }
 
 export interface IntroForgeFormProps {
