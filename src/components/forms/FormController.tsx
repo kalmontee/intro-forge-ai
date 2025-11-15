@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, Fragment } from 'react';
 
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -125,6 +125,41 @@ const FormController: React.FC<FormControllerProps> = ({
     }
   };
 
+  // Group fields for layout
+  const groupFields = () => {
+    const grouped: (FormField | FormField[])[] = [];
+    const processedFields = new Set<string>();
+
+    fields.forEach(field => {
+      if (processedFields.has(field.name)) {
+        return;
+      }
+
+      // If field has groupWith property, group it with specified fields
+      if (field.groupWith && field.groupWith.length > 0) {
+        const group: FormField[] = [field];
+
+        field.groupWith.forEach(groupedFieldName => {
+          const groupedField = fields.find(f => f.name === groupedFieldName);
+          if (groupedField && !processedFields.has(groupedFieldName)) {
+            group.push(groupedField);
+          }
+        });
+
+        group.forEach(f => processedFields.add(f.name));
+        grouped.push(group);
+      } else {
+        // Single field
+        processedFields.add(field.name);
+        grouped.push(field);
+      }
+    });
+
+    return grouped;
+  };
+
+  const groupedFields = groupFields();
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       {title && (
@@ -134,7 +169,21 @@ const FormController: React.FC<FormControllerProps> = ({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {fields.map(renderField)}
+        {groupedFields.map((fieldOrGroup, index) => {
+          // If it's a single field
+          if (!Array.isArray(fieldOrGroup)) {
+            return renderField(fieldOrGroup);
+          }
+
+          // If it's a group of fields
+          return (
+            <div key={`group-${index}`} className="grid grid-cols-2 gap-4">
+              {fieldOrGroup.map(field => (
+                <Fragment key={field.name}>{renderField(field)}</Fragment>
+              ))}
+            </div>
+          );
+        })}
 
         <div className="pt-4">
           <Button type="submit" className="w-full" size="lg" loading={isSubmitting || loading} disabled={isSubmitting || loading}>
