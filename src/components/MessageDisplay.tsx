@@ -18,7 +18,6 @@ export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boo
   }
 
   const handleCopyClick = () => {
-    // Asynchronously call copyTextToClipboard
     copyTextToClipboard()
       .then(() => {
         setIsCopied(true);
