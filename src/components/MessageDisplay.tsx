@@ -1,8 +1,36 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Button } from './ui';
 
 export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boolean }> = ({ generatedMessage, isLoading }) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  async function copyTextToClipboard() {
+    try {
+      if ('clipboard' in navigator) {
+        return await navigator.clipboard.writeText(generatedMessage);
+      }
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      alert('Failed to copy text.');
+    }
+  }
+
+  const handleCopyClick = () => {
+    // Asynchronously call copyTextToClipboard
+    copyTextToClipboard()
+      .then(() => {
+        setIsCopied(true);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 1500);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
       <h2 className="text-xl font-bold text-gray-900 mb-4 flex-shrink-0">Generated Message</h2>
@@ -15,6 +43,9 @@ export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boo
         ) : generatedMessage ? (
           <div className="prose max-w-none">
             <div className="whitespace-pre-wrap text-gray-800 bg-gray-50 p-4 rounded-md overflow-y-auto max-h-full">{generatedMessage}</div>
+            <Button type="button" className="w-30 mt-2 ml-2" size="sm" variant="outline" onClick={handleCopyClick}>
+              {isCopied ? 'Copied!' : 'Copy'}
+            </Button>
           </div>
         ) : (
           <div className="text-gray-500 italic py-8 text-center">
