@@ -24,15 +24,6 @@ const introForgeFields: FormField[] = [
     type: 'textarea',
     placeholder: "I'm a software engineer with almost 4 years of experience",
     required: true,
-    validation: (value: string) => {
-      if (value.length < 50) {
-        return 'Please provide a more detailed introduction (at least 50 characters)';
-      }
-      if (value.length > 1000) {
-        return 'Introduction should be less than 1000 characters';
-      }
-      return undefined;
-    },
   },
   {
     name: 'role',
@@ -46,7 +37,7 @@ const introForgeFields: FormField[] = [
     label: 'Company',
     type: 'text',
     placeholder: 'e.g. Google, Microsoft, Apple',
-    required: true,
+    required: false,
   },
   {
     name: 'recipient',
@@ -54,6 +45,7 @@ const introForgeFields: FormField[] = [
     type: 'text',
     placeholder: 'e.g. John, Sarah',
     required: true,
+    groupWith: ['messageType'],
     validation: (value: string) => {
       if (value.length < 2) {
         return 'Recipient name must be at least 2 characters long';
@@ -71,9 +63,16 @@ const introForgeFields: FormField[] = [
       { value: 'cold_message', label: 'Cold Message' },
       { value: 'follow_up', label: 'Follow Up' },
       { value: 'introduction', label: 'Introduction' },
-      { value: 'networking', label: 'Networking' },
       { value: 'job_inquiry', label: 'Job Inquiry' },
+      { value: 'cover_letter', label: 'Cover Letter' },
     ],
+  },
+  {
+    name: 'additionalContext',
+    label: 'Additional Context (Optional)',
+    type: 'textarea',
+    placeholder: "Any extra details you'd like to include or specific to the AI. E.g., 'Make it friendly and casual.'",
+    required: false,
   },
 ];
 
@@ -87,6 +86,7 @@ const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = fal
       company: data.company,
       recipient: data.recipient,
       messageType: data.messageType,
+      additionalContext: data.additionalContext,
     };
 
     return onSubmit(introForgeData);

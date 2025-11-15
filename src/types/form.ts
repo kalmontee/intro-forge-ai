@@ -6,6 +6,7 @@ export interface FormField {
   required?: boolean;
   options?: { value: string; label: string }[];
   validation?: (value: string) => string | undefined;
+  groupWith?: string[]; // Field names to group horizontally
 }
 
 export interface FormData {
