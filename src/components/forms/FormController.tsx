@@ -12,7 +12,6 @@ const FormController: React.FC<FormControllerProps> = ({
   fields,
   onSubmit,
   submitButtonText = 'Submit',
-  title,
   initialValues = {},
   loading = false,
 }) => {
@@ -162,12 +161,6 @@ const FormController: React.FC<FormControllerProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      {title && (
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-4">
         {groupedFields.map((fieldOrGroup, index) => {
           // If it's a single field

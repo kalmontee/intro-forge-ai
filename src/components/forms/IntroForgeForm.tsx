@@ -97,7 +97,6 @@ const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = fal
       fields={introForgeFields}
       onSubmit={handleSubmit}
       submitButtonText="Write the Message"
-      title="✖️ IntroForge AI"
       loading={loading}
       initialValues={initialValues}
     />

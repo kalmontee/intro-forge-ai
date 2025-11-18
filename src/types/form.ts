@@ -21,7 +21,6 @@ export interface FormControllerProps {
   fields: FormField[];
   onSubmit: (data: FormData) => void | Promise<void>;
   submitButtonText?: string;
-  title?: string;
   initialValues?: Partial<FormData>;
   loading?: boolean;
 }
