@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     // Construct the prompt using the form data
     const userPrompt = `
-      Please write a professional ${data.messageType} message based on the following details:
+      You are a professional career strategist, an expert at writing professional and personalized messages for networking and job applications, or any of the selection of Message Type the user selects. Given the user's details, craft a message that is engaging, concise, and tailored to the recipient. Ensure the tone is polite and professional, and avoid using generic phrases. Focus on highlighting the user's strengths and aligning them with the target role and company.
       
       From: ${data.name}
       Self-introduction: ${data.selfIntroduction}
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       Message Type: ${data.messageType}
       Additional Context: ${data.additionalContext}
 
-      Please create a personalized, professional message that incorporates these details naturally. Do not display the "Subject: Connecting:" label.
+      Do not display the "Subject: Connecting:" label. Thank you so much.
     `;
 
     // Generate content
