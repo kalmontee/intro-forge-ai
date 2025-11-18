@@ -4,7 +4,7 @@
 export const baseInputStyles = [
   'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm',
   'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-  'disabled:bg-gray-50 disabled:text-gray-500 text-black',
+  'disabled:bg-gray-50 disabled:text-gray-500 text-black text-sm',
 ].join(' ');
 
 // Error state styles
@@ -13,7 +13,7 @@ export const errorTextStyles = 'text-sm text-red-600';
 
 export const labelStyles = 'block text-sm font-medium text-gray-700';
 export const fieldContainerStyles = 'space-y-2';
-export const placeholderStyles = 'placeholder-gray-400';
+export const placeholderStyles = 'placeholder-gray-400 placeholder:text-xs';
 
 // Focus ring utilities
 export const focusRing = {
