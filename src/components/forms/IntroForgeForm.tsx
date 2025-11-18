@@ -71,7 +71,7 @@ const introForgeFields: FormField[] = [
     name: 'additionalContext',
     label: 'Additional Context (Optional)',
     type: 'textarea',
-    placeholder: "Any extra details you'd like to include or specific to the AI. E.g., 'Make it friendly and casual.'",
+    placeholder: "Any extra details you'd like to include",
     required: false,
   },
 ];
