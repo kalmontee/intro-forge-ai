@@ -7,7 +7,7 @@ import { FormField, FormData, IntroForgeFormData, IntroForgeFormProps } from '..
 const introForgeFields: FormField[] = [
   {
     name: 'name',
-    label: 'Your Name',
+    label: '👤 Your Name',
     type: 'text',
     placeholder: 'Enter your full name',
     required: true,
@@ -20,28 +20,29 @@ const introForgeFields: FormField[] = [
   },
   {
     name: 'selfIntroduction',
-    label: 'Self-Introduction',
+    label: '💼 Self-Introduction',
     type: 'textarea',
     placeholder: "I'm a software engineer with almost 4 years of experience",
     required: true,
   },
   {
     name: 'role',
-    label: 'Role',
+    label: '🎯 Role',
     type: 'text',
     placeholder: 'e.g. Engineering Manager, Software Developer',
     required: true,
+    groupWith: ['company'],
   },
   {
     name: 'company',
-    label: 'Company',
+    label: '🏢 Company',
     type: 'text',
     placeholder: 'e.g. Google, Microsoft, Apple',
     required: false,
   },
   {
     name: 'recipient',
-    label: 'Recipient',
+    label: '👋 Recipient',
     type: 'text',
     placeholder: 'e.g. John, Sarah',
     required: true,
@@ -55,7 +56,7 @@ const introForgeFields: FormField[] = [
   },
   {
     name: 'messageType',
-    label: 'Message Type',
+    label: '✉️ Message Type',
     type: 'select',
     required: true,
     options: [
@@ -69,9 +70,9 @@ const introForgeFields: FormField[] = [
   },
   {
     name: 'additionalContext',
-    label: 'Additional Context (Optional)',
+    label: '📝 Additional Context (Optional)',
     type: 'textarea',
-    placeholder: "Any extra details you'd like to include",
+    placeholder: "Any extra details you'd like to include, such as specific projects, skills, or achievements...",
     required: false,
   },
 ];
@@ -96,7 +97,7 @@ const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = fal
     <FormController
       fields={introForgeFields}
       onSubmit={handleSubmit}
-      submitButtonText="Write the Message"
+      submitButtonText="✨ Generate Message"
       loading={loading}
       initialValues={initialValues}
     />
