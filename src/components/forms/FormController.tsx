@@ -160,7 +160,13 @@ const FormController: React.FC<FormControllerProps> = ({
   const groupedFields = groupFields();
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <Fragment>
+      <div className="card-header">
+        <h2 className="card-title">Create Your Message</h2>
+        <p className="card-subtitle">
+          Fill in the details below and we&apos;ll generate a personalized professional message tailored to your needs.
+        </p>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         {groupedFields.map((fieldOrGroup, index) => {
           // If it's a single field
@@ -178,13 +184,23 @@ const FormController: React.FC<FormControllerProps> = ({
           );
         })}
 
+        {/* <Tips /> */}
+        <div className="tips-section">
+          <div className="tips-title">💡 Pro Tips</div>
+          <ul className="tips-list">
+            <li>Be specific about your relevant experience and skills</li>
+            <li>Mention mutual connections or shared interests if applicable</li>
+            <li>Keep your introduction concise but impactful</li>
+          </ul>
+        </div>
+
         <div className="pt-4">
           <Button type="submit" className="w-full" size="lg" loading={isSubmitting || loading} disabled={isSubmitting || loading}>
             {submitButtonText}
           </Button>
         </div>
       </form>
-    </div>
+    </Fragment>
   );
 };
 
