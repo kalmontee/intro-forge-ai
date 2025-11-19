@@ -41,7 +41,7 @@ export const Main: FC = () => {
   return (
     <main className="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hidden">
       {/* Form Component */}
-      <aside className="lg:col-span-1 overflow-y-auto">
+      <aside className="lg:col-span-1 overflow-y-auto card bg-white rounded-lg shadow-lg p-6">
         <IntroForgeForm
           onSubmit={handleFormSubmit}
           loading={isLoading}
