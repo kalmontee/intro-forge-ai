@@ -2,16 +2,16 @@
 
 // Base form input styles
 export const baseInputStyles = [
-  'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm',
+  'w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm bg-label text-[15px]',
   'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-  'disabled:bg-gray-50 disabled:text-gray-500 text-black text-md',
+  'disabled:bg-gray-50 disabled:text-gray-500',
 ].join(' ');
 
 // Error state styles
 export const errorInputStyles = 'border-red-500 focus:border-red-500 focus:ring-red-500';
 export const errorTextStyles = 'text-sm text-red-600';
 
-export const labelStyles = 'block text-sm font-medium text-gray-700';
+export const labelStyles = 'block text-sm font-semibold text-gray-700';
 export const fieldContainerStyles = 'space-y-2';
 export const placeholderStyles = 'placeholder-gray-400 placeholder:text-xs';
 
