@@ -5,6 +5,16 @@ import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
 import { IntroForgeFormData } from '@/types/form';
 
+const initialFormValues: IntroForgeFormData = {
+  name: localStorage.getItem('name') || '',
+  selfIntroduction: localStorage.getItem('selfIntroduction') || '',
+  role: localStorage.getItem('role') || '',
+  company: localStorage.getItem('company') || '',
+  recipient: localStorage.getItem('recipient') || '',
+  messageType: localStorage.getItem('messageType') || '',
+  additionalContext: localStorage.getItem('additionalContext') || '',
+};
+
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,19 +59,7 @@ export const Main: FC = () => {
           </p>
         </div>
 
-        <IntroForgeForm
-          onSubmit={handleFormSubmit}
-          loading={isLoading}
-          initialValues={{
-            name: '',
-            selfIntroduction: '',
-            role: '',
-            company: '',
-            recipient: '',
-            messageType: '',
-            additionalContext: '',
-          }}
-        />
+        <IntroForgeForm onSubmit={handleFormSubmit} loading={isLoading} initialValues={initialFormValues} />
       </aside>
 
       {/* Generated Message Display */}

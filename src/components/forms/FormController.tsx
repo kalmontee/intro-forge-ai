@@ -35,6 +35,13 @@ const FormController: React.FC<FormControllerProps> = ({
         [name]: value,
       }));
 
+      if (value === '') {
+        localStorage.removeItem(name);
+        return;
+      }
+
+      localStorage.setItem(name, value);
+
       // Clear error when user starts typing
       if (errors[name]) {
         setErrors(prev => ({
