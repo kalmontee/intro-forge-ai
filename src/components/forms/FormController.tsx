@@ -7,6 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { Select } from '../ui/select';
 import { Button } from '../ui/button';
 import { FormField, FormData, FormErrors, FormControllerProps } from '../../types/form';
+import { bulletListItemStyles } from '@/styles/className-utils';
 
 const FormController: React.FC<FormControllerProps> = ({
   fields,
@@ -27,7 +28,6 @@ const FormController: React.FC<FormControllerProps> = ({
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle input changes
   const handleInputChange = useCallback(
     (name: string, value: string) => {
       setFormData(prev => ({
@@ -46,7 +46,6 @@ const FormController: React.FC<FormControllerProps> = ({
     [errors]
   );
 
-  // Validate form
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
 
@@ -178,12 +177,12 @@ const FormController: React.FC<FormControllerProps> = ({
           );
         })}
 
-        <div className="tips-section">
-          <div className="tips-title">💡 Pro Tips</div>
-          <ul className="tips-list">
-            <li>Be specific about your relevant experience and skills</li>
-            <li>Mention mutual connections or shared interests if applicable</li>
-            <li>Keep your introduction concise but impactful</li>
+        <div className="tips-section-background p-5 mt-6 rounded-2xl">
+          <div className="font-semibold mb-3 text-sm text-[var(--brand-blue)]">💡 Pro Tips</div>
+          <ul className="list-none text-[13px] leading-[1.8] text-[var(--brand-blue)]">
+            <li className={bulletListItemStyles}>Be specific about your relevant experience and skills</li>
+            <li className={bulletListItemStyles}>Mention mutual connections or shared interests if applicable</li>
+            <li className={bulletListItemStyles}>Keep your introduction concise but impactful</li>
           </ul>
         </div>
 

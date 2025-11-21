@@ -13,10 +13,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({ className = '
   return (
     <div className={fieldStyles.container}>
       {label && <label className={fieldStyles.label}>{label}</label>}
-      <select
-        className={getInputStyles(error, `bg-white cursor-pointer appearance-none py-[7px] px-[12px] ${className}`)}
-        ref={ref}
-        {...props}>
+      <select className={getInputStyles(error, `cursor-pointer appearance-none py-[7px] px-[12px] ${className}`)} ref={ref} {...props}>
         {children ||
           options.map(option => (
             <option key={option.value} value={option.value}>
