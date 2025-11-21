@@ -41,10 +41,10 @@ export const Main: FC = () => {
   return (
     <main className="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hidden">
       {/* Form Section */}
-      <aside className="lg:col-span-1 overflow-y-auto card rounded-3xl h-fit bg-white p-10">
+      <aside className="lg:col-span-1 overflow-y-auto rounded-3xl h-fit bg-white p-10">
         <div className="mb-[30px]">
-          <h2 className="card-title text-xl font-bold mb-2">Create Your Message</h2>
-          <p className="card-subtitle text-[15px] leading-[1.6]">
+          <h2 className="text-[var(--card-title)] text-xl font-bold mb-2">Create Your Message</h2>
+          <p className="text-[var(--card-subtitle)] text-[15px] leading-[1.6]">
             Fill in the details below and we&apos;ll generate a personalized professional message tailored to your needs.
           </p>
         </div>

@@ -31,10 +31,10 @@ export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boo
   };
 
   return (
-    <div className="preview-card bg-white rounded-lg p-6 h-full flex flex-col">
+    <div className="preview-card bg-white rounded-3xl p-10 h-full flex flex-col">
       <h2 className="text-xl font-bold text-gray-900 mb-2 flex-shrink-0">Generated Message</h2>
-      <p className="card-subtitle">Your AI-powered professional message will appear here</p>
-      <div className="flex-1 overflow-y-auto">
+      <p className="text-[var(--card-subtitle)]">Your AI-powered professional message will appear here</p>
+      <div className="flex-1 overflow-y-auto mt-6">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -48,12 +48,12 @@ export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boo
             </Button>
           </div>
         ) : (
-          <div className="text-gray-500 italic py-8 text-center">
-            <div className="preview-empty">
-              <div className="preview-icon">📧</div>
-              <h3 className="text-xl font-semibold">No message yet</h3>
-              <p>Fill out the form and click &quot;Generate Message&quot; to create your personalized introduction.</p>
-            </div>
+          <div className="italic py-8 text-center">
+            <div className="preview-icon mb-5 opacity-50 text-[80px]">📧</div>
+            <h3 className="text-black text-xl font-semibold">No message yet</h3>
+            <p className="text-gray-500">
+              Fill out the form and click &quot;Generate Message&quot; to create your personalized introduction.
+            </p>
           </div>
         )}
       </div>
