@@ -1,9 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Button } from './ui';
+import { displayMessageStyles } from '@/styles/className-utils';
 
-export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boolean }> = ({ generatedMessage, isLoading }) => {
+export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boolean; error: string | null }> = ({
+  generatedMessage,
+  isLoading,
+  error,
+}) => {
   const [isCopied, setIsCopied] = useState(false);
 
   async function copyTextToClipboard() {
@@ -40,12 +45,18 @@ export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boo
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <span className="ml-2 text-gray-600">Generating message...</span>
           </div>
-        ) : generatedMessage ? (
+        ) : generatedMessage || error ? (
           <div className="prose max-w-none">
-            <div className="whitespace-pre-wrap text-gray-800 bg-gray-50 p-4 rounded-md overflow-y-auto max-h-full">{generatedMessage}</div>
-            <Button type="button" className="w-30 mt-2 ml-2" size="sm" variant="outline" onClick={handleCopyClick}>
-              {isCopied ? 'Copied!' : 'Copy'}
-            </Button>
+            {!error ? (
+              <Fragment>
+                <div className={displayMessageStyles}>{generatedMessage}</div>
+                <Button type="button" className="w-30 mt-2 ml-2" size="sm" variant="outline" onClick={handleCopyClick}>
+                  {isCopied ? 'Copied!' : 'Copy'}
+                </Button>
+              </Fragment>
+            ) : (
+              <div className={displayMessageStyles}>{error}</div>
+            )}
           </div>
         ) : (
           <div className="italic py-8 text-center">
