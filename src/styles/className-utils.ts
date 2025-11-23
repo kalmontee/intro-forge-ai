@@ -15,6 +15,7 @@ export const labelStyles = 'block text-sm text-[var(--label)] font-semibold text
 export const fieldContainerStyles = 'space-y-2';
 export const placeholderStyles = 'placeholder-gray-400 placeholder:text-xs';
 export const bulletListItemStyles = "pl-5 relative relative pl-6 before:content-['•'] before:absolute before:left-2 before:font-bold";
+export const displayMessageStyles = 'whitespace-pre-wrap text-gray-800 bg-gray-50 p-4 rounded-md overflow-y-auto max-h-full';
 
 // Utility function to combine base styles with conditional error styles
 export const getInputStyles = (error?: string, additionalClasses?: string) => {
