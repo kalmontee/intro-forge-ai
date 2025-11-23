@@ -18,10 +18,12 @@ const initialFormValues: IntroForgeFormData = {
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleFormSubmit = async (data: IntroForgeFormData) => {
     setIsLoading(true);
     setAiResponse('');
+    setErrorMessage(null);
 
     try {
       const response = await fetch('/api', {
@@ -43,7 +45,7 @@ export const Main: FC = () => {
     } catch (error) {
       console.error('Error generating message:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setAiResponse(`Sorry, there was an error generating your message: ${errorMessage}`);
+      setErrorMessage(`Sorry, there was an error generating your message: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +66,7 @@ export const Main: FC = () => {
 
       {/* Generated Message Display */}
       <section className="lg:col-span-1 overflow-y-auto max-h-[calc(100vh-8rem)]">
-        <MessageDisplay generatedMessage={aiResponse} isLoading={isLoading} />
+        <MessageDisplay generatedMessage={aiResponse} isLoading={isLoading} error={errorMessage} />
       </section>
     </main>
   );
