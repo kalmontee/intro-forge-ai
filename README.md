@@ -17,10 +17,10 @@ IntroForge AI is a web application that leverages artificial intelligence to hel
 
 ## Tech Stack
 
-- **Frontend:** Next.js, React
+- **Frontend:** Next.js, React, TypeScript
 - **Styling:** CSS3 with modern gradients & Tailwind
-- **AI Integration:** [Google Gemini]
-- **Deployment:** [Your hosting platform]
+- **AI Integration:** Google Gemini
+- **Deployment:** GitHub Pages for now (Soon to be changed)
 
 ## Use Cases
 
@@ -50,15 +50,14 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 2. **Select Message Type** - Choose between LinkedIn message, email, or cover letter
 3. **Add Context** - Include any specific skills or achievements you want to highlight
 4. **Generate** - Click generate to create your personalized message
-5. **Refine & Use** - Copy or regenerate until perfect
+5. **Refine & Use** - Copy to clipboard
 
 ## Future Enhancements
 
 - [ ] Multiple tone options (formal, casual, enthusiastic)
 - [ ] A/B testing for message variations
 - [ ] Integration with LinkedIn and email clients
-- [ ] Message history and analytics dashboard
-- [ ] Custom template creation and management
+- [ ] Custom template creation for recruiters or hiring managers
 
 ## Contributing
 
