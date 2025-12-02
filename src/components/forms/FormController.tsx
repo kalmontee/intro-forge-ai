@@ -40,7 +40,9 @@ const FormController: React.FC<FormControllerProps> = ({
         return;
       }
 
-      localStorage.setItem(name, value);
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.setItem(name, value);
+      }
 
       // Clear error when user starts typing
       if (errors[name]) {
