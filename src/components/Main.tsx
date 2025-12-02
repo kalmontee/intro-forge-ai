@@ -10,15 +10,31 @@ export const Main: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const initialFormValues: IntroForgeFormData = {
-    name: localStorage.getItem('name') || '',
-    selfIntroduction: localStorage.getItem('selfIntroduction') || '',
-    role: localStorage.getItem('role') || '',
-    company: localStorage.getItem('company') || '',
-    recipient: localStorage.getItem('recipient') || '',
-    messageType: localStorage.getItem('messageType') || '',
-    additionalContext: localStorage.getItem('additionalContext') || '',
-  };
+  // Use lazy initializer to load from localStorage synchronously on mount
+  const [initialFormValues] = useState<IntroForgeFormData>(() => {
+    // Check if we're on the client side
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      return {
+        name: localStorage.getItem('name') || '',
+        selfIntroduction: localStorage.getItem('selfIntroduction') || '',
+        role: localStorage.getItem('role') || '',
+        company: localStorage.getItem('company') || '',
+        recipient: localStorage.getItem('recipient') || '',
+        messageType: localStorage.getItem('messageType') || '',
+        additionalContext: localStorage.getItem('additionalContext') || '',
+      };
+    }
+
+    return {
+      name: '',
+      selfIntroduction: '',
+      role: '',
+      company: '',
+      recipient: '',
+      messageType: '',
+      additionalContext: '',
+    };
+  });
 
   const handleFormSubmit = async (data: IntroForgeFormData) => {
     setIsLoading(true);
