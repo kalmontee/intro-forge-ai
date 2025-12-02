@@ -5,20 +5,20 @@ import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
 import { IntroForgeFormData } from '@/types/form';
 
-const initialFormValues: IntroForgeFormData = {
-  name: localStorage.getItem('name') || '',
-  selfIntroduction: localStorage.getItem('selfIntroduction') || '',
-  role: localStorage.getItem('role') || '',
-  company: localStorage.getItem('company') || '',
-  recipient: localStorage.getItem('recipient') || '',
-  messageType: localStorage.getItem('messageType') || '',
-  additionalContext: localStorage.getItem('additionalContext') || '',
-};
-
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const initialFormValues: IntroForgeFormData = {
+    name: localStorage.getItem('name') || '',
+    selfIntroduction: localStorage.getItem('selfIntroduction') || '',
+    role: localStorage.getItem('role') || '',
+    company: localStorage.getItem('company') || '',
+    recipient: localStorage.getItem('recipient') || '',
+    messageType: localStorage.getItem('messageType') || '',
+    additionalContext: localStorage.getItem('additionalContext') || '',
+  };
 
   const handleFormSubmit = async (data: IntroForgeFormData) => {
     setIsLoading(true);
