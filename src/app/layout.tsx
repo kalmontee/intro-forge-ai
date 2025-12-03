@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Into Forge AI',
-  description: 'An AI-powered platform to help you forge your ideas into reality.',
+  description: 'AI-powered message generator that helps job seekers and professionals craft personalized, compelling outreach messages for LinkedIn, email introductions, and cover letters.',
 };
 
 export default function RootLayout({
