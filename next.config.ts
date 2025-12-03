@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: 'export',
+  target: 'serverless',
   basePath: process.env.PAGES_BASE_PATH,
 };
 
