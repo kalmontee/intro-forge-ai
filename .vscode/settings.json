@@ -16,5 +16,5 @@
   "typescript.autoClosingTags": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["Almonte"]
+  "cSpell.words": ["Almonte", "turbopack"]
 }
