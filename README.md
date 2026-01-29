@@ -69,4 +69,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Contact
 
-Created by Kelvin Almonte - [kelvinalmonte.dev](kelvinalmonte.dev)
+Created by Kelvin Almonte - [kelvinalmonte.dev](https://kelvinalmonte.dev)
