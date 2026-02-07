@@ -6,6 +6,24 @@
 
 IntroForge AI is a web application that leverages artificial intelligence to help professionals craft personalized, compelling outreach messages for job applications. Whether you're reaching out to recruiters on LinkedIn, writing cover letters, or sending cold emails, IntroForge AI generates tailored content in seconds based on your background and target opportunity.
 
+## System Architecture
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│   User/Browser  │────▶│   Next.js App   │────▶│  Google Gemini  │
+│                 │     │   (Frontend +   │     │      API        │
+│                 │◀────│    API Route)   │◀────│                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+         │                      │
+         │                      │
+         ▼                      ▼
+┌─────────────────┐     ┌─────────────────┐
+│   localStorage  │     │   Environment   │
+│  (Form State)   │     │   Variables     │
+└─────────────────┘     └─────────────────┘
+```
+
 ## Key Features
 
 - **Personalized Message Generation** - Create custom messages tailored to specific roles, companies, and recipients
@@ -18,9 +36,9 @@ IntroForge AI is a web application that leverages artificial intelligence to hel
 ## Tech Stack
 
 - **Frontend:** Next.js, React, TypeScript
-- **Styling:** CSS3 with modern gradients & Tailwind
+- **Styling:** Tailwind
 - **AI Integration:** Google Gemini
-- **Deployment:** GitHub Pages for now (Soon to be changed)
+- **Deployment:** Netlify
 
 ## Use Cases
 
