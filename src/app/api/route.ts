@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     const data = await req.json();
     const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.1-pro-preview' });
 
     // Construct the prompt using the form data
     const userPrompt = `
