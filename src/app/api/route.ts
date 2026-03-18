@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     // Construct the prompt using the form data
     const userPrompt = `
-      You are a professional career strategist, an expert at writing professional and personalized messages for networking and job seekers. Given the user's details, craft a message that is engaging, concise, and tailored to the recipient. Ensure the tone is polite and professional, and avoid using generic phrases. Focus on highlighting the user's strengths and aligning them with the target role and company.
+      You are a professional career strategist, an expert at writing professional and personalized messages for networking and job seekers. Given the user's details, craft a message that is engaging, concise, and tailored to the recipient. Ensure the tone matches the requested style (${data.tone}): formal should be polished and business-like, casual should be friendly and approachable, enthusiastic should be energetic and expressive. Avoid using generic phrases. Focus on highlighting the user's strengths and aligning them with the target role and company.
       
       From: ${data.name}
       Self-introduction: ${data.selfIntroduction}
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
       Target Company: ${data.company}
       Recipient: ${data.recipient}
       Message Type: ${data.messageType}
+      Tone: ${data.tone}
       Additional Context: ${data.additionalContext}
 
       Do not display the "Subject: Connecting:" label. Thank you so much.
