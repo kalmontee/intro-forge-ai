@@ -69,6 +69,18 @@ const introForgeFields: FormField[] = [
     ],
   },
   {
+    name: 'tone',
+    label: '🎨 Tone',
+    type: 'select',
+    required: true,
+    options: [
+      { value: '', label: 'Select tone' },
+      { value: 'formal', label: 'Formal' },
+      { value: 'casual', label: 'Casual' },
+      { value: 'enthusiastic', label: 'Enthusiastic' },
+    ],
+  },
+  {
     name: 'additionalContext',
     label: '📝 Additional Context (Optional)',
     type: 'textarea',
@@ -87,6 +99,7 @@ const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = fal
       company: data.company,
       recipient: data.recipient,
       messageType: data.messageType,
+      tone: data.tone,
       additionalContext: data.additionalContext,
     };
 

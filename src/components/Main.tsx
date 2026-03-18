@@ -21,6 +21,7 @@ export const Main: FC = () => {
         company: localStorage.getItem('company') || '',
         recipient: localStorage.getItem('recipient') || '',
         messageType: localStorage.getItem('messageType') || '',
+        tone: localStorage.getItem('tone') || '',
         additionalContext: localStorage.getItem('additionalContext') || '',
       };
     }
@@ -32,6 +33,7 @@ export const Main: FC = () => {
       company: '',
       recipient: '',
       messageType: '',
+      tone: '',
       additionalContext: '',
     };
   });

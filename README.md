@@ -72,7 +72,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## Future Enhancements
 
-- [ ] Multiple tone options (formal, casual, enthusiastic)
+- [x] Multiple tone options (formal, casual, enthusiastic)
 - [ ] A/B testing for message variations
 - [ ] Integration with LinkedIn and email clients
 - [ ] Custom template creation for recruiters or hiring managers
