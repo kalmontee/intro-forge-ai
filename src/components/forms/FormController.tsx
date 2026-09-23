@@ -108,6 +108,7 @@ const FormController: React.FC<FormControllerProps> = ({
       name: field.name,
       value: formData[field.name],
       placeholder: field.placeholder,
+      maxLength: field.maxLength,
       error: errors[field.name],
       label: field.label,
     };

@@ -3,6 +3,7 @@
 import React from 'react';
 import FormController from './FormController';
 import { FormField, FormData, IntroForgeFormData, IntroForgeFormProps } from '../../types/form';
+import { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from '@/lib/intro-request-fields';
 
 const introForgeFields: FormField[] = [
   {
@@ -11,6 +12,7 @@ const introForgeFields: FormField[] = [
     type: 'text',
     placeholder: 'Enter your full name',
     required: true,
+    maxLength: FIELD_LIMITS.name,
     validation: (value: string) => {
       if (value.length < 2) {
         return 'Name must be at least 2 characters long';
@@ -24,6 +26,7 @@ const introForgeFields: FormField[] = [
     type: 'textarea',
     placeholder: "I'm a software engineer with almost 4 years of experience",
     required: true,
+    maxLength: FIELD_LIMITS.selfIntroduction,
   },
   {
     name: 'role',
@@ -31,6 +34,7 @@ const introForgeFields: FormField[] = [
     type: 'text',
     placeholder: 'e.g. Engineering Manager, Software Developer',
     required: true,
+    maxLength: FIELD_LIMITS.role,
     groupWith: ['company'],
   },
   {
@@ -39,6 +43,7 @@ const introForgeFields: FormField[] = [
     type: 'text',
     placeholder: 'e.g. Google, Microsoft, Apple',
     required: false,
+    maxLength: FIELD_LIMITS.company,
   },
   {
     name: 'recipient',
@@ -46,6 +51,7 @@ const introForgeFields: FormField[] = [
     type: 'text',
     placeholder: 'e.g. John, Sarah',
     required: true,
+    maxLength: FIELD_LIMITS.recipient,
     groupWith: ['messageType'],
     validation: (value: string) => {
       if (value.length < 2) {
@@ -59,26 +65,14 @@ const introForgeFields: FormField[] = [
     label: '✉️ Message Type',
     type: 'select',
     required: true,
-    options: [
-      { value: '', label: 'Select message type' },
-      { value: 'cold_message', label: 'Cold Message' },
-      { value: 'follow_up', label: 'Follow Up' },
-      { value: 'introduction', label: 'Introduction' },
-      { value: 'job_inquiry', label: 'Job Inquiry' },
-      { value: 'cover_letter', label: 'Cover Letter' },
-    ],
+    options: [{ value: '', label: 'Select message type' }, ...MESSAGE_TYPE_OPTIONS],
   },
   {
     name: 'tone',
     label: '🎨 Tone',
     type: 'select',
     required: true,
-    options: [
-      { value: '', label: 'Select tone' },
-      { value: 'formal', label: 'Formal' },
-      { value: 'casual', label: 'Casual' },
-      { value: 'enthusiastic', label: 'Enthusiastic' },
-    ],
+    options: [{ value: '', label: 'Select tone' }, ...TONE_OPTIONS],
   },
   {
     name: 'additionalContext',
@@ -86,6 +80,7 @@ const introForgeFields: FormField[] = [
     type: 'textarea',
     placeholder: "Any extra details you'd like to include, such as specific projects, skills, or achievements...",
     required: false,
+    maxLength: FIELD_LIMITS.additionalContext,
   },
 ];
 

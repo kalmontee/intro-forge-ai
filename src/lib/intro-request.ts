@@ -1,30 +1,7 @@
 import { z } from 'zod';
+import { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from './intro-request-fields';
 
-// Single source of truth for what POST /api accepts. The form reads the same
-// limits and options so client and server validation cannot drift apart.
-
-export const MESSAGE_TYPE_OPTIONS = [
-  { value: 'cold_message', label: 'Cold Message' },
-  { value: 'follow_up', label: 'Follow Up' },
-  { value: 'introduction', label: 'Introduction' },
-  { value: 'job_inquiry', label: 'Job Inquiry' },
-  { value: 'cover_letter', label: 'Cover Letter' },
-] as const;
-
-export const TONE_OPTIONS = [
-  { value: 'formal', label: 'Formal' },
-  { value: 'casual', label: 'Casual' },
-  { value: 'enthusiastic', label: 'Enthusiastic' },
-] as const;
-
-export const FIELD_LIMITS = {
-  name: 100,
-  selfIntroduction: 2000,
-  role: 120,
-  company: 120,
-  recipient: 100,
-  additionalContext: 2000,
-} as const;
+export { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS };
 
 // Largest body a valid request can produce (six capped fields, worst-case
 // 4-byte UTF-8, plus JSON overhead) fits comfortably under this.

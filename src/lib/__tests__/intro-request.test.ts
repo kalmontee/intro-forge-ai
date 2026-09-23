@@ -57,16 +57,13 @@ describe('parseIntroRequest', () => {
     expect(result).toMatchObject({ ok: false, status: 422 });
   });
 
-  it.each(['name', 'selfIntroduction', 'role', 'recipient', 'messageType', 'tone'])(
-    'rejects a missing required field: %s',
-    async field => {
-      const body: Record<string, unknown> = { ...validBody };
-      delete body[field];
-      const result = await parseIntroRequest(postJson(body));
-      expect(result).toMatchObject({ ok: false, status: 422 });
-      expect(!result.ok && result.fieldErrors?.[field]).toBeTruthy();
-    }
-  );
+  it.each(['name', 'selfIntroduction', 'role', 'recipient', 'messageType', 'tone'])('rejects a missing required field: %s', async field => {
+    const body: Record<string, unknown> = { ...validBody };
+    delete body[field];
+    const result = await parseIntroRequest(postJson(body));
+    expect(result).toMatchObject({ ok: false, status: 422 });
+    expect(!result.ok && result.fieldErrors?.[field]).toBeTruthy();
+  });
 
   it('rejects whitespace-only required fields', async () => {
     const result = await parseIntroRequest(postJson({ ...validBody, selfIntroduction: '   \n\t ' }));
