@@ -8,6 +8,7 @@ import { Select } from '../ui/select';
 import { Button } from '../ui/button';
 import { FormField, FormData, FormErrors, FormControllerProps } from '../../types/form';
 import { bulletListItemStyles } from '@/styles/className-utils';
+import { saveField } from '@/lib/form-storage';
 
 const FormController: React.FC<FormControllerProps> = ({
   fields,
@@ -35,13 +36,10 @@ const FormController: React.FC<FormControllerProps> = ({
         [name]: value,
       }));
 
-      if (value === '') {
-        localStorage.removeItem(name);
-        return;
-      }
+      saveField(name, value);
 
-      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        localStorage.setItem(name, value);
+      if (value === '') {
+        return;
       }
 
       // Clear error when user starts typing
@@ -108,6 +106,7 @@ const FormController: React.FC<FormControllerProps> = ({
       name: field.name,
       value: formData[field.name],
       placeholder: field.placeholder,
+      maxLength: field.maxLength,
       error: errors[field.name],
       label: field.label,
     };

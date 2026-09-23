@@ -4,6 +4,7 @@ export interface FormField {
   type: 'text' | 'textarea' | 'select';
   placeholder?: string;
   required?: boolean;
+  maxLength?: number;
   options?: { value: string; label: string }[];
   validation?: (value: string) => string | undefined;
   groupWith?: string[]; // Field names to group horizontally
