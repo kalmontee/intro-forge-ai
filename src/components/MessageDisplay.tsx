@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './ui';
 import { displayMessageStyles } from '@/styles/className-utils';
 import { describeBrief, getMessageStats } from '@/lib/message-meta';
@@ -15,9 +15,24 @@ export const MessageDisplay: React.FC<{
   brief: IntroForgeFormData;
 }> = ({ generatedMessage, isLoading, error, brief }) => {
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
+  const paneRef = useRef<HTMLDivElement>(null);
 
   // A new message resets the copy confirmation
   useEffect(() => setCopyStatus('idle'), [generatedMessage]);
+
+  // On stacked (mobile) layouts the pane sits below the form, so bring the result into view
+  useEffect(() => {
+    const pane = paneRef.current;
+    if (!pane || (!generatedMessage && !error) || window.matchMedia('(min-width: 1024px)').matches) {
+      return;
+    }
+
+    const { top } = pane.getBoundingClientRect();
+    if (top < 0 || top > window.innerHeight / 2) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      pane.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+  }, [generatedMessage, error]);
 
   const handleCopyClick = async () => {
     try {
@@ -37,7 +52,7 @@ export const MessageDisplay: React.FC<{
   const liveStatus = isLoading ? 'Writing your message…' : error ? error : hasMessage ? 'Your message is ready.' : '';
 
   return (
-    <div className="flex flex-col">
+    <div ref={paneRef} className="flex scroll-mt-4 flex-col">
       <h2 className="text-title font-semibold text-slate">Your message</h2>
       <p className="sr-only" aria-live="polite">
         {liveStatus}
@@ -61,7 +76,8 @@ export const MessageDisplay: React.FC<{
         ) : error ? (
           <p className="max-w-[65ch] text-error">{error}</p>
         ) : hasMessage ? (
-          <MessageBody message={generatedMessage} copyStatus={copyStatus} onCopy={handleCopyClick} />
+          // Keyed by message so the arrival animation plays once per new message, not on re-renders
+          <MessageBody key={generatedMessage} message={generatedMessage} copyStatus={copyStatus} onCopy={handleCopyClick} />
         ) : (
           <p className="max-w-[48ch] text-muted">
             {summary
@@ -76,10 +92,18 @@ export const MessageDisplay: React.FC<{
 
 const MessageBody: React.FC<{ message: string; copyStatus: CopyStatus; onCopy: () => void }> = ({ message, copyStatus, onCopy }) => {
   const { words, readTime } = getMessageStats(message);
+  const paragraphs = message.trim().split(/\n\s*\n/);
 
   return (
     <div>
-      <div className={displayMessageStyles}>{message}</div>
+      <div className={`${displayMessageStyles} space-y-[1.7em]`}>
+        {paragraphs.map((paragraph, i) => (
+          // Stagger capped so long messages still settle within about half a second
+          <p key={i} className="message-arrive" style={{ animationDelay: `${Math.min(i * 60, 240)}ms` }}>
+            {paragraph}
+          </p>
+        ))}
+      </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4">
         <p className="text-meta text-muted">

@@ -36,3 +36,21 @@ body {
   background-repeat: no-repeat;
   background-position: right 14px center;
 }
+
+/* The one orchestrated moment: a new message's paragraphs arrive top to bottom */
+@keyframes message-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.message-arrive {
+  animation: message-arrive 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-arrive {
+    animation: none;
+  }
+}
