@@ -4,39 +4,26 @@ import { FC, useState } from 'react';
 import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
 import { IntroForgeFormData } from '@/types/form';
+import { EMPTY_FORM, clearSavedForm, loadSavedForm } from '@/lib/form-storage';
+import { Button } from './ui';
 
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Use lazy initializer to load from localStorage synchronously on mount
-  const [initialFormValues] = useState<IntroForgeFormData>(() => {
-    // Check if we're on the client side
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      return {
-        name: localStorage.getItem('name') || '',
-        selfIntroduction: localStorage.getItem('selfIntroduction') || '',
-        role: localStorage.getItem('role') || '',
-        company: localStorage.getItem('company') || '',
-        recipient: localStorage.getItem('recipient') || '',
-        messageType: localStorage.getItem('messageType') || '',
-        tone: localStorage.getItem('tone') || '',
-        additionalContext: localStorage.getItem('additionalContext') || '',
-      };
-    }
+  // Lazy initializer loads the saved form synchronously on mount.
+  const [initialFormValues, setInitialFormValues] = useState<IntroForgeFormData>(() => loadSavedForm());
+  const [formKey, setFormKey] = useState(0);
+  const [clearedNotice, setClearedNotice] = useState(false);
 
-    return {
-      name: '',
-      selfIntroduction: '',
-      role: '',
-      company: '',
-      recipient: '',
-      messageType: '',
-      tone: '',
-      additionalContext: '',
-    };
-  });
+  const handleClearSavedData = () => {
+    clearSavedForm();
+    setInitialFormValues({ ...EMPTY_FORM });
+    setFormKey(key => key + 1);
+    setClearedNotice(true);
+    setTimeout(() => setClearedNotice(false), 3000);
+  };
 
   const handleFormSubmit = async (data: IntroForgeFormData) => {
     setIsLoading(true);
@@ -84,7 +71,22 @@ export const Main: FC = () => {
           </p>
         </div>
 
-        <IntroForgeForm onSubmit={handleFormSubmit} loading={isLoading} initialValues={initialFormValues} />
+        <IntroForgeForm key={formKey} onSubmit={handleFormSubmit} loading={isLoading} initialValues={initialFormValues} />
+
+        <div className="mt-4 space-y-3 text-[13px] leading-[1.6] text-[var(--card-subtitle)]">
+          <p>
+            Your details are sent to Google Gemini to generate the message. Form values are saved only in this browser so they are still
+            here when you come back.
+          </p>
+          <div className="flex items-center gap-3">
+            <Button type="button" variant="outline" size="sm" onClick={handleClearSavedData}>
+              Clear saved data
+            </Button>
+            <span role="status" aria-live="polite">
+              {clearedNotice ? 'Saved data cleared.' : ''}
+            </span>
+          </div>
+        </div>
       </aside>
 
       {/* Generated Message Display */}
