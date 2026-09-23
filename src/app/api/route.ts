@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { parseIntroRequest } from '@/lib/intro-request';
 
 export async function POST(req: Request) {
   try {
@@ -8,7 +9,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
-    const data = await req.json();
+    const parsed = await parseIntroRequest(req);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error, fieldErrors: parsed.fieldErrors }, { status: parsed.status });
+    }
+
+    const data = parsed.data;
     const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
 
