@@ -13,9 +13,9 @@ export const errorInputStyles = 'border-error focus-visible:outline-error';
 export const errorTextStyles = 'text-meta text-error';
 
 export const labelStyles = 'block text-ui font-medium text-slate';
+export const hintTextStyles = 'text-meta text-muted';
 export const fieldContainerStyles = 'space-y-1.5';
 export const placeholderStyles = 'placeholder:text-muted/80';
-export const bulletListItemStyles = "pl-5 relative relative pl-6 before:content-['•'] before:absolute before:left-2 before:font-bold";
 export const displayMessageStyles = 'whitespace-pre-wrap text-body leading-[1.7] text-slate max-w-[65ch]';
 
 // Utility function to combine base styles with conditional error styles
@@ -31,11 +31,16 @@ export const getInputStyles = (error?: string, additionalClasses?: string) => {
 export const getFieldStyles = () => ({
   container: fieldContainerStyles,
   label: labelStyles,
+  hint: hintTextStyles,
   error: errorTextStyles,
 });
 
-// Accessibility attributes that link a control to its error message
-export const getErrorA11yProps = (id: string | undefined, error?: string) => ({
-  'aria-invalid': error ? true : undefined,
-  'aria-describedby': error && id ? `${id}-error` : undefined,
-});
+// Accessibility attributes that link a control to its hint and error message
+export const getDescriptionA11yProps = (id: string | undefined, error?: string, hint?: string) => {
+  const describedBy = id ? [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') : '';
+
+  return {
+    'aria-invalid': error ? true : undefined,
+    'aria-describedby': describedBy || undefined,
+  };
+};

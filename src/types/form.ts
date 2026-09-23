@@ -1,12 +1,14 @@
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'textarea' | 'select';
+  type: 'text' | 'textarea' | 'select' | 'radio';
   placeholder?: string;
+  hint?: string; // Short help text shown under the field
   required?: boolean;
   options?: { value: string; label: string }[];
   validation?: (value: string) => string | undefined;
   groupWith?: string[]; // Field names to group horizontally
+  section?: string; // Consecutive fields with the same section render under one heading
 }
 
 export interface FormData {

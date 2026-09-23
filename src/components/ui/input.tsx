@@ -1,30 +1,18 @@
 import React from 'react';
-import { getInputStyles, getFieldStyles, getErrorA11yProps } from '@/styles/className-utils';
+import { getInputStyles, getDescriptionA11yProps } from '@/styles/className-utils';
+import { Field } from './field';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  hint?: string;
   error?: string;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', label, error, id, ...props }, ref) => {
-  const fieldStyles = getFieldStyles();
-
-  return (
-    <div className={fieldStyles.container}>
-      {label && (
-        <label htmlFor={id} className={fieldStyles.label}>
-          {label}
-        </label>
-      )}
-      <input id={id} className={getInputStyles(error, `h-10 ${className}`)} ref={ref} {...getErrorA11yProps(id, error)} {...props} />
-      {error && (
-        <p id={id ? `${id}-error` : undefined} className={fieldStyles.error}>
-          {error}
-        </p>
-      )}
-    </div>
-  );
-});
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', label, hint, error, id, ...props }, ref) => (
+  <Field id={id} label={label} hint={hint} error={error}>
+    <input id={id} className={getInputStyles(error, `h-10 ${className}`)} ref={ref} {...getDescriptionA11yProps(id, error, hint)} {...props} />
+  </Field>
+));
 
 Input.displayName = 'Input';
 

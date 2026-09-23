@@ -7,74 +7,80 @@ import { FormField, FormData, IntroForgeFormData, IntroForgeFormProps } from '..
 const introForgeFields: FormField[] = [
   {
     name: 'name',
-    label: '👤 Your Name',
+    label: 'Your name',
     type: 'text',
-    placeholder: 'Enter your full name',
+    placeholder: 'e.g. Alex Rivera',
     required: true,
+    section: 'From you',
     validation: (value: string) => {
       if (value.length < 2) {
-        return 'Name must be at least 2 characters long';
+        return 'Enter at least 2 characters for your name';
       }
       return undefined;
     },
   },
   {
     name: 'selfIntroduction',
-    label: '💼 Self-Introduction',
+    label: 'About you',
     type: 'textarea',
-    placeholder: "I'm a software engineer with almost 4 years of experience",
+    placeholder: 'e.g. Frontend engineer with 4 years building React apps for fintech',
+    hint: 'Name specific skills or results. Shared connections or interests help too.',
     required: true,
-  },
-  {
-    name: 'role',
-    label: '🎯 Role',
-    type: 'text',
-    placeholder: 'e.g. Engineering Manager, Software Developer',
-    required: true,
-    groupWith: ['company'],
-  },
-  {
-    name: 'company',
-    label: '🏢 Company',
-    type: 'text',
-    placeholder: 'e.g. Google, Microsoft, Apple',
-    required: false,
+    section: 'From you',
   },
   {
     name: 'recipient',
-    label: '👋 Recipient',
+    label: 'Recipient',
     type: 'text',
-    placeholder: 'e.g. John, Sarah',
+    placeholder: 'e.g. Sarah',
     required: true,
-    groupWith: ['messageType'],
+    section: 'To whom',
     validation: (value: string) => {
       if (value.length < 2) {
-        return 'Recipient name must be at least 2 characters long';
+        return "Enter at least 2 characters for the recipient's name";
       }
       return undefined;
     },
   },
   {
+    name: 'role',
+    label: 'Role you want',
+    type: 'text',
+    placeholder: 'e.g. Senior Frontend Engineer',
+    required: true,
+    section: 'To whom',
+    groupWith: ['company'],
+  },
+  {
+    name: 'company',
+    label: 'Company (optional)',
+    type: 'text',
+    placeholder: 'e.g. Stripe',
+    required: false,
+    section: 'To whom',
+  },
+  {
     name: 'messageType',
-    label: '✉️ Message Type',
+    label: 'Message type',
     type: 'select',
     required: true,
+    section: 'The message',
     options: [
-      { value: '', label: 'Select message type' },
-      { value: 'cold_message', label: 'Cold Message' },
-      { value: 'follow_up', label: 'Follow Up' },
+      { value: '', label: 'Choose a type' },
+      { value: 'cold_message', label: 'Cold message' },
+      { value: 'follow_up', label: 'Follow-up' },
       { value: 'introduction', label: 'Introduction' },
-      { value: 'job_inquiry', label: 'Job Inquiry' },
-      { value: 'cover_letter', label: 'Cover Letter' },
+      { value: 'job_inquiry', label: 'Job inquiry' },
+      { value: 'cover_letter', label: 'Cover letter' },
     ],
   },
   {
     name: 'tone',
-    label: '🎨 Tone',
-    type: 'select',
+    label: 'Tone',
+    type: 'radio',
     required: true,
+    section: 'The message',
     options: [
-      { value: '', label: 'Select tone' },
       { value: 'formal', label: 'Formal' },
       { value: 'casual', label: 'Casual' },
       { value: 'enthusiastic', label: 'Enthusiastic' },
@@ -82,10 +88,11 @@ const introForgeFields: FormField[] = [
   },
   {
     name: 'additionalContext',
-    label: '📝 Additional Context (Optional)',
+    label: 'Extra details (optional)',
     type: 'textarea',
-    placeholder: "Any extra details you'd like to include, such as specific projects, skills, or achievements...",
+    placeholder: 'e.g. A project you shipped, a mutual contact, or why this company',
     required: false,
+    section: 'The message',
   },
 ];
 
@@ -110,7 +117,7 @@ const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = fal
     <FormController
       fields={introForgeFields}
       onSubmit={handleSubmit}
-      submitButtonText="✨ Generate Message"
+      submitButtonText={loading ? 'Writing your message…' : 'Write my message'}
       loading={loading}
       initialValues={initialValues}
     />

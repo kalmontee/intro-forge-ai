@@ -1,42 +1,39 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
 import { IntroForgeFormData } from '@/types/form';
+
+const emptyFormValues: IntroForgeFormData = {
+  name: '',
+  selfIntroduction: '',
+  role: '',
+  company: '',
+  recipient: '',
+  messageType: '',
+  tone: '',
+  additionalContext: '',
+};
 
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Use lazy initializer to load from localStorage synchronously on mount
-  const [initialFormValues] = useState<IntroForgeFormData>(() => {
-    // Check if we're on the client side
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      return {
-        name: localStorage.getItem('name') || '',
-        selfIntroduction: localStorage.getItem('selfIntroduction') || '',
-        role: localStorage.getItem('role') || '',
-        company: localStorage.getItem('company') || '',
-        recipient: localStorage.getItem('recipient') || '',
-        messageType: localStorage.getItem('messageType') || '',
-        tone: localStorage.getItem('tone') || '',
-        additionalContext: localStorage.getItem('additionalContext') || '',
-      };
-    }
+  // Saved values are read after mount, not during render: the server renders empty fields,
+  // and React won't patch a mismatched select or radio during hydration.
+  const [initialFormValues, setInitialFormValues] = useState<IntroForgeFormData>(emptyFormValues);
+  const [savedValuesLoaded, setSavedValuesLoaded] = useState(false);
 
-    return {
-      name: '',
-      selfIntroduction: '',
-      role: '',
-      company: '',
-      recipient: '',
-      messageType: '',
-      tone: '',
-      additionalContext: '',
-    };
-  });
+  useEffect(() => {
+    const saved = { ...emptyFormValues };
+    (Object.keys(saved) as (keyof IntroForgeFormData)[]).forEach(key => {
+      saved[key] = localStorage.getItem(key) || '';
+    });
+    setInitialFormValues(saved);
+    setSavedValuesLoaded(true);
+  }, []);
 
   const handleFormSubmit = async (data: IntroForgeFormData) => {
     setIsLoading(true);
@@ -79,7 +76,13 @@ export const Main: FC = () => {
           <p className="mt-1 text-muted">Tell us who you&apos;re writing to and what you want. We&apos;ll write the message.</p>
         </div>
 
-        <IntroForgeForm onSubmit={handleFormSubmit} loading={isLoading} initialValues={initialFormValues} />
+        {/* Remount once saved values load so the form picks them up as its initial state */}
+        <IntroForgeForm
+          key={savedValuesLoaded ? 'saved' : 'initial'}
+          onSubmit={handleFormSubmit}
+          loading={isLoading}
+          initialValues={initialFormValues}
+        />
       </section>
 
       {/* Draft (generated message) */}
