@@ -53,9 +53,14 @@ export const Main: FC = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData: { error?: string; fieldErrors?: Record<string, string[]> } = await response.json().catch(() => ({}));
         console.error('API Error:', errorData);
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        const fieldMessages = Object.values(errorData.fieldErrors ?? {}).flat();
+        throw new Error(
+          fieldMessages.length > 0
+            ? fieldMessages.join('. ')
+            : errorData.error || `The server returned an unexpected response (${response.status}). Please try again.`
+        );
       }
 
       const result = await response.json();
