@@ -56,11 +56,30 @@ git clone https://github.com/yourusername/introforge-ai.git
 # Install dependencies
 npm install
 
+# Configure environment variables
+cp .env.example .env.local
+# then set GEMINI_API_KEY in .env.local
+
 # Run development server
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+### Environment Variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | Yes | Google Gemini API key. Used only by the server-side `POST /api` route and never sent to the browser. |
+| `ALLOWED_ORIGINS` | No | Comma-separated extra origins allowed to call `POST /api`. Same-origin requests are always allowed. |
+
+Locally, put these in `.env.local`, which is gitignored. Never commit real keys; only `.env.example` is tracked. In production on Netlify, set them under **Site configuration > Environment variables**.
+
+### Tests
+
+```bash
+npm run test
+```
 
 ## How It Works
 

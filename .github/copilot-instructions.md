@@ -30,9 +30,10 @@ src/
 npm run dev      # Start dev server with Turbopack (port 3000)
 npm run build    # Production build with Turbopack
 npm run lint     # ESLint
+npm run test     # Vitest unit tests
 ```
 
-**Environment:** Requires `GEMINI_API_KEY` in `.env.local` for AI generation.
+**Environment:** Copy `.env.example` to `.env.local` and set `GEMINI_API_KEY` for AI generation (see the README for all variables). On Netlify, set variables in the site's environment settings.
 
 ## Code Conventions
 
