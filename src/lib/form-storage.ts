@@ -58,12 +58,15 @@ function migrateLegacyKeys(storage: FormStorage): void {
 
 export function loadSavedForm(storage: FormStorage | null = browserStorage()): IntroForgeFormData {
   if (!storage) return { ...EMPTY_FORM };
+
   try {
     migrateLegacyKeys(storage);
     const saved = { ...EMPTY_FORM };
+
     for (const field of FORM_FIELD_NAMES) {
       saved[field] = storage.getItem(storageKey(field)) ?? '';
     }
+
     return saved;
   } catch {
     return { ...EMPTY_FORM };
@@ -73,6 +76,7 @@ export function loadSavedForm(storage: FormStorage | null = browserStorage()): I
 // Saves one field; an empty value removes it rather than storing "".
 export function saveField(field: string, value: string, storage: FormStorage | null = browserStorage()): void {
   if (!storage) return;
+
   try {
     if (value === '') {
       storage.removeItem(storageKey(field));
@@ -88,12 +92,15 @@ export function saveField(field: string, value: string, storage: FormStorage | n
 // nothing else stored on this origin.
 export function clearSavedForm(storage: FormStorage | null = browserStorage()): void {
   if (!storage) return;
+
   try {
     const prefixed: string[] = [];
+
     for (let i = 0; i < storage.length; i++) {
       const key = storage.key(i);
       if (key?.startsWith(STORAGE_PREFIX)) prefixed.push(key);
     }
+
     for (const key of prefixed) storage.removeItem(key);
     for (const field of FORM_FIELD_NAMES) storage.removeItem(field);
   } catch {
