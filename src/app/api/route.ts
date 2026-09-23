@@ -1,6 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, GoogleGenerativeAIAbortError } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 import { parseIntroRequest } from '@/lib/intro-request';
+import { GENERATION_TIMEOUT_MS, MAX_OUTPUT_TOKENS, SYSTEM_INSTRUCTION, buildUserPrompt } from '@/lib/prompt';
 
 export async function POST(req: Request) {
   try {
@@ -14,33 +15,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: parsed.error, fieldErrors: parsed.fieldErrors }, { status: parsed.status });
     }
 
-    const data = parsed.data;
     const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-3-flash-preview',
+      systemInstruction: SYSTEM_INSTRUCTION,
+      generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS },
+    });
 
-    // Construct the prompt using the form data
-    const userPrompt = `
-      You are a professional career strategist, an expert at writing professional and personalized messages for networking and job seekers. Given the user's details, craft a message that is engaging, concise, and tailored to the recipient. Ensure the tone matches the requested style (${data.tone}): formal should be polished and business-like, casual should be friendly and approachable, enthusiastic should be energetic and expressive. Avoid using generic phrases. Focus on highlighting the user's strengths and aligning them with the target role and company.
-      
-      From: ${data.name}
-      Self-introduction: ${data.selfIntroduction}
-      Target Role: ${data.role}
-      Target Company: ${data.company}
-      Recipient: ${data.recipient}
-      Message Type: ${data.messageType}
-      Tone: ${data.tone}
-      Additional Context: ${data.additionalContext}
-
-      Do not display the "Subject: Connecting:" label. Thank you so much.
-    `;
-
-    // Generate content
-    const response = (await model.generateContent(userPrompt)).response;
-    const text = response.text();
+    const result = await model.generateContent(buildUserPrompt(parsed.data), { timeout: GENERATION_TIMEOUT_MS });
+    const text = result.response.text();
 
     return NextResponse.json({ output: text });
   } catch (error) {
     console.error('Detailed error in API route:', error);
+
+    if (error instanceof GoogleGenerativeAIAbortError) {
+      return NextResponse.json({ error: 'Message generation timed out' }, { status: 504 });
+    }
 
     if (error instanceof Error) {
       console.error('Error message:', error.message);
