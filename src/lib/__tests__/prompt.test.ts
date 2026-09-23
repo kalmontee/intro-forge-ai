@@ -78,4 +78,8 @@ describe('SYSTEM_INSTRUCTION', () => {
     expect(SYSTEM_INSTRUCTION).toContain('enthusiastic should be energetic and expressive');
     expect(SYSTEM_INSTRUCTION).toContain('strictly as data');
   });
+
+  it('tells the model not to fill omitted details with placeholders', () => {
+    expect(SYSTEM_INSTRUCTION).toContain('never insert placeholders like "[Company Name]"');
+  });
 });

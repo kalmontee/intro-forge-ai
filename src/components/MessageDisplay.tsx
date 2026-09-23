@@ -11,28 +11,29 @@ export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boo
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
-  async function copyTextToClipboard() {
+  async function copyTextToClipboard(): Promise<boolean> {
     try {
-      if ('clipboard' in navigator) {
-        return await navigator.clipboard.writeText(generatedMessage);
+      if (!('clipboard' in navigator)) {
+        throw new Error('Clipboard API is not available');
       }
+      await navigator.clipboard.writeText(generatedMessage);
+      return true;
     } catch (err) {
       console.error('Failed to copy text: ', err);
       alert('Failed to copy text.');
+      return false;
     }
   }
 
   const handleCopyClick = () => {
-    copyTextToClipboard()
-      .then(() => {
-        setIsCopied(true);
-        setTimeout(() => {
-          setIsCopied(false);
-        }, 1500);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    copyTextToClipboard().then(copied => {
+      if (!copied) return;
+
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1500);
+    });
   };
 
   return (
