@@ -16,6 +16,17 @@ const emptyFormValues: IntroForgeFormData = {
   additionalContext: '',
 };
 
+// Status codes come from src/app/api/route.ts
+const getApiErrorMessage = (status: number) => {
+  if (status === 429) {
+    return 'Too many messages are being written right now. Wait a minute, then try again.';
+  }
+  if (status === 403) {
+    return "Message writing isn't set up correctly on this site, so it can't write messages right now.";
+  }
+  return "Couldn't write your message. Try again in a moment.";
+};
+
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,32 +46,45 @@ export const Main: FC = () => {
     setSavedValuesLoaded(true);
   }, []);
 
+  // Live values drive the draft pane's summary; the submitted ones label the finished message
+  const [brief, setBrief] = useState<IntroForgeFormData>(emptyFormValues);
+  const [submittedBrief, setSubmittedBrief] = useState<IntroForgeFormData | null>(null);
+
   const handleFormSubmit = async (data: IntroForgeFormData) => {
     setIsLoading(true);
     setAiResponse('');
     setErrorMessage(null);
+    setSubmittedBrief(data);
 
+    let response: Response;
     try {
-      const response = await fetch('/api', {
+      response = await fetch('/api', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
+    } catch (error) {
+      console.error('Error reaching the API:', error);
+      setErrorMessage("Couldn't reach the server. Check your connection, then try again.");
+      setIsLoading(false);
+      return;
+    }
 
+    try {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('API Error:', errorData);
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        setErrorMessage(getApiErrorMessage(response.status));
+        return;
       }
 
       const result = await response.json();
       setAiResponse(result.output);
     } catch (error) {
       console.error('Error generating message:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setErrorMessage(`Sorry, there was an error generating your message: ${errorMessage}`);
+      setErrorMessage(getApiErrorMessage(response.status));
     } finally {
       setIsLoading(false);
     }
@@ -80,6 +104,7 @@ export const Main: FC = () => {
         <IntroForgeForm
           key={savedValuesLoaded ? 'saved' : 'initial'}
           onSubmit={handleFormSubmit}
+          onValuesChange={setBrief}
           loading={isLoading}
           initialValues={initialFormValues}
         />
@@ -88,7 +113,12 @@ export const Main: FC = () => {
       {/* Draft (generated message) */}
       <section aria-label="Your message" className="border-t border-line p-6 sm:p-8 lg:border-t-0">
         <div className="lg:sticky lg:top-8">
-          <MessageDisplay generatedMessage={aiResponse} isLoading={isLoading} error={errorMessage} />
+          <MessageDisplay
+            generatedMessage={aiResponse}
+            isLoading={isLoading}
+            error={errorMessage}
+            brief={submittedBrief && (isLoading || aiResponse || errorMessage) ? submittedBrief : brief}
+          />
         </div>
       </section>
     </main>

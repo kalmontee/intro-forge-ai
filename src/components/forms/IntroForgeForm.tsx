@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import FormController from './FormController';
 import { FormField, FormData, IntroForgeFormData, IntroForgeFormProps } from '../../types/form';
 
@@ -96,27 +96,28 @@ const introForgeFields: FormField[] = [
   },
 ];
 
-const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = false, initialValues = {} }) => {
-  const handleSubmit = (data: FormData) => {
-    // Cast the generic FormData to our specific type
-    const introForgeData: IntroForgeFormData = {
-      name: data.name,
-      selfIntroduction: data.selfIntroduction,
-      role: data.role,
-      company: data.company,
-      recipient: data.recipient,
-      messageType: data.messageType,
-      tone: data.tone,
-      additionalContext: data.additionalContext,
-    };
+// Map the generic FormData to our specific type
+const toIntroForgeData = (data: FormData): IntroForgeFormData => ({
+  name: data.name,
+  selfIntroduction: data.selfIntroduction,
+  role: data.role,
+  company: data.company,
+  recipient: data.recipient,
+  messageType: data.messageType,
+  tone: data.tone,
+  additionalContext: data.additionalContext,
+});
 
-    return onSubmit(introForgeData);
-  };
+const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, onValuesChange, loading = false, initialValues = {} }) => {
+  const handleSubmit = (data: FormData) => onSubmit(toIntroForgeData(data));
+
+  const handleValuesChange = useCallback((data: FormData) => onValuesChange?.(toIntroForgeData(data)), [onValuesChange]);
 
   return (
     <FormController
       fields={introForgeFields}
       onSubmit={handleSubmit}
+      onValuesChange={handleValuesChange}
       submitButtonText={loading ? 'Writing your message…' : 'Write my message'}
       loading={loading}
       initialValues={initialValues}

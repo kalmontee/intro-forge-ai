@@ -22,6 +22,7 @@ export interface FormErrors {
 export interface FormControllerProps {
   fields: FormField[];
   onSubmit: (data: FormData) => void | Promise<void>;
+  onValuesChange?: (data: FormData) => void; // Called with the current values whenever they change
   submitButtonText?: string;
   initialValues?: Partial<FormData>;
   loading?: boolean;
@@ -40,6 +41,7 @@ export interface IntroForgeFormData {
 
 export interface IntroForgeFormProps {
   onSubmit: (data: IntroForgeFormData) => void | Promise<void>;
+  onValuesChange?: (data: IntroForgeFormData) => void;
   loading?: boolean;
   initialValues?: Partial<IntroForgeFormData>;
 }

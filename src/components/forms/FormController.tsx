@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, Fragment } from 'react';
+import React, { useState, useCallback, useEffect, Fragment } from 'react';
 
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -16,6 +16,7 @@ const rowSection = (row: FieldRow) => (Array.isArray(row) ? row[0].section : row
 const FormController: React.FC<FormControllerProps> = ({
   fields,
   onSubmit,
+  onValuesChange,
   submitButtonText = 'Submit',
   initialValues = {},
   loading = false,
@@ -28,6 +29,11 @@ const FormController: React.FC<FormControllerProps> = ({
     });
     return initialData;
   });
+
+  // Report current values to the parent, including the initial ones
+  useEffect(() => {
+    onValuesChange?.(formData);
+  }, [formData, onValuesChange]);
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
