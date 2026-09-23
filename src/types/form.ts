@@ -5,6 +5,7 @@ export interface FormField {
   placeholder?: string;
   hint?: string; // Short help text shown under the field
   required?: boolean;
+  maxLength?: number;
   options?: { value: string; label: string }[];
   validation?: (value: string) => string | undefined;
   groupWith?: string[]; // Field names to group horizontally

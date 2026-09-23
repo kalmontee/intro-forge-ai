@@ -8,6 +8,7 @@ import { Select } from '../ui/select';
 import { RadioGroup } from '../ui/radio-group';
 import { Button } from '../ui/button';
 import { FormField, FormData, FormErrors, FormControllerProps } from '../../types/form';
+import { saveField } from '@/lib/form-storage';
 
 type FieldRow = FormField | FormField[];
 
@@ -45,13 +46,10 @@ const FormController: React.FC<FormControllerProps> = ({
         [name]: value,
       }));
 
-      if (value === '') {
-        localStorage.removeItem(name);
-        return;
-      }
+      saveField(name, value);
 
-      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        localStorage.setItem(name, value);
+      if (value === '') {
+        return;
       }
 
       // Clear error when user starts typing
@@ -119,6 +117,7 @@ const FormController: React.FC<FormControllerProps> = ({
       value: formData[field.name],
       placeholder: field.placeholder,
       hint: field.hint,
+      maxLength: field.maxLength,
       error: errors[field.name],
       label: field.label,
     };

@@ -4,28 +4,8 @@ import { FC, useEffect, useState } from 'react';
 import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
 import { IntroForgeFormData } from '@/types/form';
-
-const emptyFormValues: IntroForgeFormData = {
-  name: '',
-  selfIntroduction: '',
-  role: '',
-  company: '',
-  recipient: '',
-  messageType: '',
-  tone: '',
-  additionalContext: '',
-};
-
-// Status codes come from src/app/api/route.ts
-const getApiErrorMessage = (status: number) => {
-  if (status === 429) {
-    return 'Too many messages are being written right now. Wait a minute, then try again.';
-  }
-  if (status === 403) {
-    return "Message writing isn't set up correctly on this site, so it can't write messages right now.";
-  }
-  return "Couldn't write your message. Try again in a moment.";
-};
+import { EMPTY_FORM, clearSavedForm, loadSavedForm } from '@/lib/form-storage';
+import { Button } from './ui';
 
 export const Main: FC = () => {
   const [aiResponse, setAiResponse] = useState<string>('');
@@ -34,20 +14,26 @@ export const Main: FC = () => {
 
   // Saved values are read after mount, not during render: the server renders empty fields,
   // and React won't patch a mismatched select or radio during hydration.
-  const [initialFormValues, setInitialFormValues] = useState<IntroForgeFormData>(emptyFormValues);
-  const [savedValuesLoaded, setSavedValuesLoaded] = useState(false);
+  // Bumping formKey remounts the form so it takes new initial values (after loading or clearing).
+  const [initialFormValues, setInitialFormValues] = useState<IntroForgeFormData>(EMPTY_FORM);
+  const [formKey, setFormKey] = useState(0);
+  const [clearedNotice, setClearedNotice] = useState(false);
 
   useEffect(() => {
-    const saved = { ...emptyFormValues };
-    (Object.keys(saved) as (keyof IntroForgeFormData)[]).forEach(key => {
-      saved[key] = localStorage.getItem(key) || '';
-    });
-    setInitialFormValues(saved);
-    setSavedValuesLoaded(true);
+    setInitialFormValues(loadSavedForm());
+    setFormKey(key => key + 1);
   }, []);
 
+  const handleClearSavedData = () => {
+    clearSavedForm();
+    setInitialFormValues({ ...EMPTY_FORM });
+    setFormKey(key => key + 1);
+    setClearedNotice(true);
+    setTimeout(() => setClearedNotice(false), 3000);
+  };
+
   // Live values drive the draft pane's summary; the submitted ones label the finished message
-  const [brief, setBrief] = useState<IntroForgeFormData>(emptyFormValues);
+  const [brief, setBrief] = useState<IntroForgeFormData>(EMPTY_FORM);
   const [submittedBrief, setSubmittedBrief] = useState<IntroForgeFormData | null>(null);
 
   const handleFormSubmit = async (data: IntroForgeFormData) => {
@@ -74,9 +60,15 @@ export const Main: FC = () => {
 
     try {
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        // The API returns client-safe messages (see src/lib/api-errors.ts) and per-field validation errors
+        const errorData: { error?: string; fieldErrors?: Record<string, string[]> } = await response.json().catch(() => ({}));
         console.error('API Error:', errorData);
-        setErrorMessage(getApiErrorMessage(response.status));
+        const fieldMessages = Object.values(errorData.fieldErrors ?? {}).flat();
+        setErrorMessage(
+          fieldMessages.length > 0
+            ? `${fieldMessages.join('. ')}.`
+            : errorData.error || `Couldn't write your message (the server returned ${response.status}). Try again in a moment.`
+        );
         return;
       }
 
@@ -84,7 +76,7 @@ export const Main: FC = () => {
       setAiResponse(result.output);
     } catch (error) {
       console.error('Error generating message:', error);
-      setErrorMessage(getApiErrorMessage(response.status));
+      setErrorMessage("Couldn't read the server's response. Try again in a moment.");
     } finally {
       setIsLoading(false);
     }
@@ -100,14 +92,29 @@ export const Main: FC = () => {
           <p className="mt-1 text-muted">Tell us who you&apos;re writing to and what you want. We&apos;ll write the message.</p>
         </div>
 
-        {/* Remount once saved values load so the form picks them up as its initial state */}
         <IntroForgeForm
-          key={savedValuesLoaded ? 'saved' : 'initial'}
+          key={formKey}
           onSubmit={handleFormSubmit}
           onValuesChange={setBrief}
           loading={isLoading}
           initialValues={initialFormValues}
         />
+
+        {/* Privacy notice and saved-data control */}
+        <div className="mt-6 space-y-3 border-t border-line pt-5 text-meta leading-relaxed text-muted">
+          <p>
+            Your details are sent to Google Gemini to write the message. Form values are saved only in this browser, so they&apos;re
+            still here when you come back.
+          </p>
+          <div className="flex items-center gap-3">
+            <Button type="button" variant="outline" size="sm" onClick={handleClearSavedData}>
+              Clear saved data
+            </Button>
+            <span role="status" aria-live="polite">
+              {clearedNotice ? 'Saved data cleared.' : ''}
+            </span>
+          </div>
+        </div>
       </section>
 
       {/* Draft (generated message) */}

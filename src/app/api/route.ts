@@ -1,61 +1,45 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { GENERATION_UNAVAILABLE, toErrorResponse } from '@/lib/api-errors';
+import { parseIntroRequest } from '@/lib/intro-request';
+import { isAllowedOrigin, isJsonContentType } from '@/lib/origin';
+import { GENERATION_TIMEOUT_MS, MAX_OUTPUT_TOKENS, SYSTEM_INSTRUCTION, buildUserPrompt } from '@/lib/prompt';
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY is not set');
-      return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const data = await req.json();
+    if (!isJsonContentType(req.headers.get('content-type'))) {
+      return NextResponse.json({ error: 'Content-Type must be application/json' }, { status: 415 });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY is not set');
+      return NextResponse.json(GENERATION_UNAVAILABLE.body, { status: GENERATION_UNAVAILABLE.status });
+    }
+
+    const parsed = await parseIntroRequest(req);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error, fieldErrors: parsed.fieldErrors }, { status: parsed.status });
+    }
+
     const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-3-flash-preview',
+      systemInstruction: SYSTEM_INSTRUCTION,
+      generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS },
+    });
 
-    // Construct the prompt using the form data
-    const userPrompt = `
-      You are a professional career strategist, an expert at writing professional and personalized messages for networking and job seekers. Given the user's details, craft a message that is engaging, concise, and tailored to the recipient. Ensure the tone matches the requested style (${data.tone}): formal should be polished and business-like, casual should be friendly and approachable, enthusiastic should be energetic and expressive. Avoid using generic phrases. Focus on highlighting the user's strengths and aligning them with the target role and company.
-      
-      From: ${data.name}
-      Self-introduction: ${data.selfIntroduction}
-      Target Role: ${data.role}
-      Target Company: ${data.company}
-      Recipient: ${data.recipient}
-      Message Type: ${data.messageType}
-      Tone: ${data.tone}
-      Additional Context: ${data.additionalContext}
-
-      Do not display the "Subject: Connecting:" label. Thank you so much.
-    `;
-
-    // Generate content
-    const response = (await model.generateContent(userPrompt)).response;
-    const text = response.text();
+    const result = await model.generateContent(buildUserPrompt(parsed.data), { timeout: GENERATION_TIMEOUT_MS });
+    const text = result.response.text();
 
     return NextResponse.json({ output: text });
   } catch (error) {
-    console.error('Detailed error in API route:', error);
-
-    if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-
-      // Handle specific Gemini API errors
-      if (error.message.includes('API_KEY_INVALID') || error.message.includes('403')) {
-        return NextResponse.json({ error: 'Invalid API key' }, { status: 403 });
-      }
-
-      if (error.message.includes('quota') || error.message.includes('rate limit')) {
-        return NextResponse.json({ error: 'API quota exceeded' }, { status: 429 });
-      }
-    }
-
-    return NextResponse.json(
-      {
-        error: 'Failed to generate AI response.',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    // Full detail stays in server logs; the client only gets a fixed message.
+    console.error('Message generation failed:', error);
+    const { status, body } = toErrorResponse(error);
+    return NextResponse.json(body, { status });
   }
 }
