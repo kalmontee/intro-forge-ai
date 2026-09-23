@@ -23,7 +23,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ id, name, label, value, options
         role="radiogroup"
         aria-labelledby={labelId}
         {...getDescriptionA11yProps(id, error, hint)}
-        className={`flex gap-1 rounded-field border bg-canvas p-1 ${error ? 'border-error' : 'border-line'}`}
+        className={`flex gap-1 rounded-field border bg-canvas p-1 ${error ? 'border-error' : 'border-field'}`}
       >
         {options.map((option, index) => (
           <label key={option.value} className="flex-1">

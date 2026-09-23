@@ -47,20 +47,26 @@ npm run lint     # ESLint
 Forms use a declarative configuration pattern via `FormController`:
 
 ```typescript
-// Define fields with validation, grouping, and options
+// Define fields with validation, grouping, sections, hints, and options
 const fields: FormField[] = [
-  { name: 'role', label: '🎯 Role', type: 'text', required: true, groupWith: ['company'] },
-  { name: 'messageType', type: 'select', options: [...] }
+  { name: 'role', label: 'Role you want', type: 'text', required: true, section: 'To whom', groupWith: ['company'] },
+  { name: 'tone', label: 'Tone', type: 'radio', section: 'The message', options: [...] }
 ];
-// FormController handles rendering, validation, and localStorage persistence
+// FormController handles rendering, sections, validation, and localStorage persistence
 ```
+
+- Consecutive fields with the same `section` render under one heading.
+- `onValuesChange` reports live values (used for the brief summary in the message pane).
+- Labels are plain sentence-case text. No emoji.
 
 ### Styling Approach
 
 - **Tailwind CSS v4** for utility classes
-- **CSS variables** for theming: `var(--card-title)`, `var(--btn-primary)`, `var(--label)`
+- **Design tokens** live in `src/app/globals.css` under `@theme` and are used as utilities: colors `canvas`, `surface`, `slate`, `muted`, `forge`, `line`, `field`, `error` (e.g. `bg-forge`, `text-muted`); type sizes `text-meta` / `text-ui` / `text-body` / `text-title`; radii `rounded-field` / `rounded-surface`. Don't hard-code hex values in components.
+- `line` is for decorative dividers only; form control edges use `field`, which meets 3:1 contrast on white.
 - **Shared utilities** in `src/styles/className-utils.ts` for consistent input/field styling
-- Compose styles: `getInputStyles(error, additionalClasses)`, `getFieldStyles()`
+- Compose styles: `getInputStyles(error, additionalClasses)`, `getFieldStyles()`, `getDescriptionA11yProps(id, error, hint)`
+- Motion: the only automatic animation is `.message-arrive` for a new message. It is disabled under `prefers-reduced-motion`.
 
 ### TypeScript
 
@@ -82,12 +88,14 @@ Located in `src/components/ui/`:
 | Component | Props | Notes |
 |-----------|-------|-------|
 | `Button` | `variant`, `size`, `loading` | Has loading spinner built-in |
-| `Input` | `label`, `error` | Auto-applies error styling |
-| `Textarea` | `label`, `error` | Same pattern as Input |
-| `Select` | `label`, `error`, `options` | Dropdown with styling |
+| `Input` | `label`, `hint`, `error` | Auto-applies error styling |
+| `Textarea` | `label`, `hint`, `error` | Same pattern as Input |
+| `Select` | `label`, `hint`, `error`, `options` | Dropdown with styling |
+| `RadioGroup` | `label`, `value`, `options`, `onChange`, `hint`, `error` | Segmented control on native radios (arrow keys work) |
+| `Field` | `id`, `label`, `hint`, `error` | Shared label/hint/error wrapper used by the controls above |
 
-All use `getInputStyles()` and `getFieldStyles()` from className-utils for consistency.
+Controls link their label with `htmlFor` and their hint/error with `aria-describedby`; errors also set `aria-invalid`.
 
 ## Fonts
 
-Uses Geist Sans and Geist Mono via `next/font/google` (configured in `layout.tsx`).
+Uses Schibsted Grotesk via `next/font/google` (configured in `layout.tsx`, exposed as `--font-schibsted` on `<html>`).

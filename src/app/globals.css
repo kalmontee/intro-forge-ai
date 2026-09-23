@@ -7,7 +7,8 @@
   --color-muted: #5b6875;
   --color-forge: #1f4fe0;
   --color-forge-hover: #1a43c2;
-  --color-line: #d5dbe1;
+  --color-line: #d5dbe1; /* decorative hairlines only */
+  --color-field: #87929e; /* form control edges: 3.16:1 on white (WCAG 1.4.11) */
   --color-error: #b42318;
 
   --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
@@ -16,7 +17,6 @@
   --text-ui: 15px;
   --text-body: 17px;
   --text-title: 22px;
-  --text-display: 30px;
 
   --radius-surface: 14px;
   --radius-field: 8px;

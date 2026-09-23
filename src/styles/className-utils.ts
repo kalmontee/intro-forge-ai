@@ -8,14 +8,14 @@ export const baseInputStyles = [
 ].join(' ');
 
 // Border and focus colors: exactly one of these is applied so they never compete
-export const validInputStyles = 'border-line hover:border-muted/50 focus-visible:border-forge focus-visible:outline-forge';
+export const validInputStyles = 'border-field hover:border-muted focus-visible:border-forge focus-visible:outline-forge';
 export const errorInputStyles = 'border-error focus-visible:outline-error';
 export const errorTextStyles = 'text-meta text-error';
 
 export const labelStyles = 'block text-ui font-medium text-slate';
 export const hintTextStyles = 'text-meta text-muted';
 export const fieldContainerStyles = 'space-y-1.5';
-export const placeholderStyles = 'placeholder:text-muted/80';
+export const placeholderStyles = 'placeholder:text-muted';
 export const displayMessageStyles = 'whitespace-pre-wrap text-body leading-[1.7] text-slate max-w-[65ch]';
 
 // Utility function to combine base styles with conditional error styles

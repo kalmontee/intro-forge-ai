@@ -15,7 +15,7 @@ const baseStyles = [
 const variants = {
   primary: 'bg-forge text-white hover:bg-forge-hover disabled:hover:bg-forge',
   secondary: 'bg-slate text-white hover:bg-slate/90',
-  outline: 'border border-line bg-surface text-slate hover:bg-canvas',
+  outline: 'border border-field bg-surface text-slate hover:bg-canvas',
 };
 
 const sizes = {
