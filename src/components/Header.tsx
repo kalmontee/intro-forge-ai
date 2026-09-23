@@ -3,10 +3,10 @@ import Image from 'next/image';
 
 const Header: React.FC = () => {
   return (
-    <header className="bg-transparent">
-      <div className="mx-auto px-2 py-2 flex items-center">
-        <Image src="/introForgeLogo.png" alt="IntroForge AI Logo" className="filter brightness-0 invert" width={50} height={50} />
-        <h1 className="text-2xl font-bold text-white">IntroForge AI</h1>
+    <header className="mb-5 lg:mb-6">
+      <div className="flex items-center gap-2">
+        <Image src="/introForgeLogo.png" alt="" width={44} height={44} priority />
+        <h1 className="text-title font-semibold tracking-tight text-slate">IntroForge AI</h1>
       </div>
     </header>
   );

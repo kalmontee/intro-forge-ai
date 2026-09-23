@@ -186,9 +186,9 @@ const FormController: React.FC<FormControllerProps> = ({
           );
         })}
 
-        <div className="tips-section-background p-5 mt-6 rounded-2xl">
-          <div className="font-semibold mb-3 text-sm text-[var(--brand-blue)]">💡 Pro Tips</div>
-          <ul className="list-none text-[13px] leading-[1.8] text-[var(--brand-blue)]">
+        <div className="border-t border-line pt-5 mt-6">
+          <div className="font-semibold mb-3 text-sm text-muted">💡 Pro Tips</div>
+          <ul className="list-none text-[13px] leading-[1.8] text-muted">
             <li className={bulletListItemStyles}>Be specific about your relevant experience and skills</li>
             <li className={bulletListItemStyles}>Mention mutual connections or shared interests if applicable</li>
             <li className={bulletListItemStyles}>Keep your introduction concise but impactful</li>

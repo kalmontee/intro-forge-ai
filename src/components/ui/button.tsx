@@ -6,19 +6,22 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean;
 }
 
-const baseStyles =
-  'inline-flex items-center font-semibold justify-center font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer';
+const baseStyles = [
+  'inline-flex items-center justify-center gap-2 rounded-field font-medium transition-colors cursor-pointer',
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forge',
+  'disabled:opacity-60 disabled:cursor-not-allowed',
+].join(' ');
 
 const variants = {
-  primary: 'bg-[image:var(--btn-primary)] hover:opacity-90 text-white focus:ring-blue-500',
-  secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
-  outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-blue-500',
+  primary: 'bg-forge text-white hover:bg-forge-hover disabled:hover:bg-forge',
+  secondary: 'bg-slate text-white hover:bg-slate/90',
+  outline: 'border border-line bg-surface text-slate hover:bg-canvas',
 };
 
 const sizes = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
+  sm: 'h-8 px-3 text-meta',
+  md: 'h-10 px-4 text-ui',
+  lg: 'h-11 px-5 text-ui',
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -28,7 +31,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`} disabled={isDisabled} ref={ref} {...props}>
         {loading && (
-          <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-4 w-4 motion-reduce:animate-none" fill="none" viewBox="0 0 24 24" aria-hidden="true">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path
               className="opacity-75"

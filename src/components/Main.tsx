@@ -69,22 +69,24 @@ export const Main: FC = () => {
     }
   };
   return (
-    <main className="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hidden">
-      {/* Form Section */}
-      <aside className="lg:col-span-1 overflow-y-auto rounded-3xl h-fit bg-white p-10">
-        <div className="mb-[30px]">
-          <h2 className="text-[var(--card-title)] text-xl font-bold mb-2">Create Your Message</h2>
-          <p className="text-[var(--card-subtitle)] text-[15px] leading-[1.6]">
-            Fill in the details below and we&apos;ll generate a personalized professional message tailored to your needs.
-          </p>
+    <main className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] bg-surface rounded-surface shadow-surface">
+      {/* Brief (form) */}
+      <section aria-labelledby="brief-heading" className="p-6 sm:p-8 lg:border-r lg:border-line">
+        <div className="mb-6">
+          <h2 id="brief-heading" className="text-title font-semibold text-slate">
+            Your brief
+          </h2>
+          <p className="mt-1 text-muted">Tell us who you&apos;re writing to and what you want. We&apos;ll write the message.</p>
         </div>
 
         <IntroForgeForm onSubmit={handleFormSubmit} loading={isLoading} initialValues={initialFormValues} />
-      </aside>
+      </section>
 
-      {/* Generated Message Display */}
-      <section className="lg:col-span-1 overflow-y-auto max-h-[calc(100vh-8rem)]">
-        <MessageDisplay generatedMessage={aiResponse} isLoading={isLoading} error={errorMessage} />
+      {/* Draft (generated message) */}
+      <section aria-label="Your message" className="border-t border-line p-6 sm:p-8 lg:border-t-0">
+        <div className="lg:sticky lg:top-8">
+          <MessageDisplay generatedMessage={aiResponse} isLoading={isLoading} error={errorMessage} />
+        </div>
       </section>
     </main>
   );
