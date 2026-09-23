@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "next": "^15.5.7",
+    "next": "^15.5.26",
     "prettier": "^3.6.2",
     "react": "^19.2.1",
     "react-dom": "^19.2.1"
@@ -23,7 +23,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.5",
+    "eslint-config-next": "^15.5.26",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.11"
