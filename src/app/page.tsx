@@ -6,7 +6,7 @@ import { Footer } from '@/components/Footer';
 export default function Home(): JSX.Element {
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-5">
+      <div className="mx-auto max-w-[1280px] px-4 py-5 sm:px-6 lg:py-8">
         <Header />
         <Main />
         <Footer />
@@ -14,4 +14,3 @@ export default function Home(): JSX.Element {
     </div>
   );
 }
-// max-w-[1400px]

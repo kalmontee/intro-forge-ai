@@ -1,13 +1,15 @@
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'textarea' | 'select';
+  type: 'text' | 'textarea' | 'select' | 'radio';
   placeholder?: string;
+  hint?: string; // Short help text shown under the field
   required?: boolean;
   maxLength?: number;
   options?: { value: string; label: string }[];
   validation?: (value: string) => string | undefined;
   groupWith?: string[]; // Field names to group horizontally
+  section?: string; // Consecutive fields with the same section render under one heading
 }
 
 export interface FormData {
@@ -21,6 +23,7 @@ export interface FormErrors {
 export interface FormControllerProps {
   fields: FormField[];
   onSubmit: (data: FormData) => void | Promise<void>;
+  onValuesChange?: (data: FormData) => void; // Called with the current values whenever they change
   submitButtonText?: string;
   initialValues?: Partial<FormData>;
   loading?: boolean;
@@ -39,6 +42,7 @@ export interface IntroForgeFormData {
 
 export interface IntroForgeFormProps {
   onSubmit: (data: IntroForgeFormData) => void | Promise<void>;
+  onValuesChange?: (data: IntroForgeFormData) => void;
   loading?: boolean;
   initialValues?: Partial<IntroForgeFormData>;
 }

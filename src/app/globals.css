@@ -1,63 +1,56 @@
 @import 'tailwindcss';
 
-:root {
-  --background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
-  --foreground: #171717;
-  --brand-blue: #1e40af;
-  --basic-white: #ffffff;
-  --card-title: #1e293b;
-  --card-subtitle: #64748b;
-  --label: #334155;
-  --btn-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-}
+@theme {
+  --color-canvas: #edf0f3;
+  --color-surface: #ffffff;
+  --color-slate: #2e3b47;
+  --color-muted: #5b6875;
+  --color-forge: #1f4fe0;
+  --color-forge-hover: #1a43c2;
+  --color-line: #d5dbe1; /* decorative hairlines only */
+  --color-field: #87929e; /* form control edges: 3.16:1 on white (WCAG 1.4.11) */
+  --color-error: #b42318;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: #ededed;
-  }
+  --text-meta: 13px;
+  --text-ui: 15px;
+  --text-body: 17px;
+  --text-title: 22px;
+
+  --radius-surface: 14px;
+  --radius-field: 8px;
+
+  --shadow-surface: 0 1px 2px rgb(46 59 71 / 0.06), 0 12px 32px -12px rgb(46 59 71 / 0.18);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  scroll-behavior: smooth;
+  background: var(--color-canvas);
+  color: var(--color-slate);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui);
 }
 
-.preview-card {
-  min-height: 500px;
-}
-
-input[type='text'],
-textarea,
-select {
-  border: 2px solid #e2e8f0;
-  transition: all 0.2s;
-  background: #f8fafc;
-}
-
-input[type='text']:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  background: var(--basic-white);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-select {
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2364748b' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+.select-chevron {
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%235b6875' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 16px center;
+  background-position: right 14px center;
 }
 
-.tips-section-background {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+/* The one orchestrated moment: a new message's paragraphs arrive top to bottom */
+@keyframes message-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.message-arrive {
+  animation: message-arrive 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-arrive {
+    animation: none;
+  }
 }

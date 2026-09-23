@@ -1,111 +1,127 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import FormController from './FormController';
 import { FormField, FormData, IntroForgeFormData, IntroForgeFormProps } from '../../types/form';
 import { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from '@/lib/intro-request-fields';
 
+// The shared option labels are Title Case because the prompt uses them; the form shows sentence case
+const toSentenceCase = ({ value, label }: { value: string; label: string }) => ({
+  value,
+  label: label.charAt(0) + label.slice(1).toLowerCase(),
+});
+
 const introForgeFields: FormField[] = [
   {
     name: 'name',
-    label: '👤 Your Name',
+    label: 'Your name',
     type: 'text',
-    placeholder: 'Enter your full name',
+    placeholder: 'e.g. Alex Rivera',
     required: true,
+    section: 'From you',
     maxLength: FIELD_LIMITS.name,
     validation: (value: string) => {
       if (value.length < 2) {
-        return 'Name must be at least 2 characters long';
+        return 'Enter at least 2 characters for your name';
       }
       return undefined;
     },
   },
   {
     name: 'selfIntroduction',
-    label: '💼 Self-Introduction',
+    label: 'About you',
     type: 'textarea',
-    placeholder: "I'm a software engineer with almost 4 years of experience",
+    placeholder: 'e.g. Frontend engineer with 4 years building React apps for fintech',
+    hint: 'Name specific skills or results. Shared connections or interests help too.',
     required: true,
+    section: 'From you',
     maxLength: FIELD_LIMITS.selfIntroduction,
   },
   {
-    name: 'role',
-    label: '🎯 Role',
-    type: 'text',
-    placeholder: 'e.g. Engineering Manager, Software Developer',
-    required: true,
-    maxLength: FIELD_LIMITS.role,
-    groupWith: ['company'],
-  },
-  {
-    name: 'company',
-    label: '🏢 Company',
-    type: 'text',
-    placeholder: 'e.g. Google, Microsoft, Apple',
-    required: false,
-    maxLength: FIELD_LIMITS.company,
-  },
-  {
     name: 'recipient',
-    label: '👋 Recipient',
+    label: 'Recipient',
     type: 'text',
-    placeholder: 'e.g. John, Sarah',
+    placeholder: 'e.g. Sarah',
     required: true,
+    section: 'To whom',
     maxLength: FIELD_LIMITS.recipient,
-    groupWith: ['messageType'],
     validation: (value: string) => {
       if (value.length < 2) {
-        return 'Recipient name must be at least 2 characters long';
+        return "Enter at least 2 characters for the recipient's name";
       }
       return undefined;
     },
   },
   {
+    name: 'role',
+    label: 'Role you want',
+    type: 'text',
+    placeholder: 'e.g. Senior Frontend Engineer',
+    required: true,
+    section: 'To whom',
+    maxLength: FIELD_LIMITS.role,
+    groupWith: ['company'],
+  },
+  {
+    name: 'company',
+    label: 'Company (optional)',
+    type: 'text',
+    placeholder: 'e.g. Stripe',
+    required: false,
+    section: 'To whom',
+    maxLength: FIELD_LIMITS.company,
+  },
+  {
     name: 'messageType',
-    label: '✉️ Message Type',
+    label: 'Message type',
     type: 'select',
     required: true,
-    options: [{ value: '', label: 'Select message type' }, ...MESSAGE_TYPE_OPTIONS],
+    section: 'The message',
+    options: [{ value: '', label: 'Choose a type' }, ...MESSAGE_TYPE_OPTIONS.map(toSentenceCase)],
   },
   {
     name: 'tone',
-    label: '🎨 Tone',
-    type: 'select',
+    label: 'Tone',
+    type: 'radio',
     required: true,
-    options: [{ value: '', label: 'Select tone' }, ...TONE_OPTIONS],
+    section: 'The message',
+    // No empty option: the segmented control shows "none chosen" by having nothing selected
+    options: [...TONE_OPTIONS],
   },
   {
     name: 'additionalContext',
-    label: '📝 Additional Context (Optional)',
+    label: 'Extra details (optional)',
     type: 'textarea',
-    placeholder: "Any extra details you'd like to include, such as specific projects, skills, or achievements...",
+    placeholder: 'e.g. A project you shipped, a mutual contact, or why this company',
     required: false,
+    section: 'The message',
     maxLength: FIELD_LIMITS.additionalContext,
   },
 ];
 
-const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, loading = false, initialValues = {} }) => {
-  const handleSubmit = (data: FormData) => {
-    // Cast the generic FormData to our specific type
-    const introForgeData: IntroForgeFormData = {
-      name: data.name,
-      selfIntroduction: data.selfIntroduction,
-      role: data.role,
-      company: data.company,
-      recipient: data.recipient,
-      messageType: data.messageType,
-      tone: data.tone,
-      additionalContext: data.additionalContext,
-    };
+// Map the generic FormData to our specific type
+const toIntroForgeData = (data: FormData): IntroForgeFormData => ({
+  name: data.name,
+  selfIntroduction: data.selfIntroduction,
+  role: data.role,
+  company: data.company,
+  recipient: data.recipient,
+  messageType: data.messageType,
+  tone: data.tone,
+  additionalContext: data.additionalContext,
+});
 
-    return onSubmit(introForgeData);
-  };
+const IntroForgeForm: React.FC<IntroForgeFormProps> = ({ onSubmit, onValuesChange, loading = false, initialValues = {} }) => {
+  const handleSubmit = (data: FormData) => onSubmit(toIntroForgeData(data));
+
+  const handleValuesChange = useCallback((data: FormData) => onValuesChange?.(toIntroForgeData(data)), [onValuesChange]);
 
   return (
     <FormController
       fields={introForgeFields}
       onSubmit={handleSubmit}
-      submitButtonText="✨ Generate Message"
+      onValuesChange={handleValuesChange}
+      submitButtonText={loading ? 'Writing your message…' : 'Write my message'}
       loading={loading}
       initialValues={initialValues}
     />

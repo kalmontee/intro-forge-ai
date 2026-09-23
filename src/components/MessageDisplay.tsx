@@ -1,73 +1,123 @@
 'use client';
 
-import React, { Fragment, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './ui';
 import { displayMessageStyles } from '@/styles/className-utils';
+import { describeBrief, getMessageStats } from '@/lib/message-meta';
+import { IntroForgeFormData } from '@/types/form';
 
-export const MessageDisplay: React.FC<{ generatedMessage: string; isLoading: boolean; error: string | null }> = ({
-  generatedMessage,
-  isLoading,
-  error,
-}) => {
-  const [isCopied, setIsCopied] = useState(false);
+type CopyStatus = 'idle' | 'copied' | 'failed';
 
-  async function copyTextToClipboard(): Promise<boolean> {
+export const MessageDisplay: React.FC<{
+  generatedMessage: string;
+  isLoading: boolean;
+  error: string | null;
+  brief: IntroForgeFormData;
+}> = ({ generatedMessage, isLoading, error, brief }) => {
+  const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
+  const paneRef = useRef<HTMLDivElement>(null);
+
+  // A new message resets the copy confirmation
+  useEffect(() => setCopyStatus('idle'), [generatedMessage]);
+
+  // On stacked (mobile) layouts the pane sits below the form, so bring the result into view
+  useEffect(() => {
+    const pane = paneRef.current;
+    if (!pane || (!generatedMessage && !error) || window.matchMedia('(min-width: 1024px)').matches) {
+      return;
+    }
+
+    const { top } = pane.getBoundingClientRect();
+    if (top < 0 || top > window.innerHeight / 2) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      pane.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+  }, [generatedMessage, error]);
+
+  const handleCopyClick = async () => {
     try {
-      if (!('clipboard' in navigator)) {
-        throw new Error('Clipboard API is not available');
-      }
       await navigator.clipboard.writeText(generatedMessage);
-      return true;
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
-      alert('Failed to copy text.');
-      return false;
+      setCopyStatus('failed');
     }
-  }
-
-  const handleCopyClick = () => {
-    copyTextToClipboard().then(copied => {
-      if (!copied) return;
-
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 1500);
-    });
   };
 
+  const summary = describeBrief(brief);
+  const hasMessage = Boolean(generatedMessage) && !error;
+
+  // Short status for screen readers; the message itself stays out of the live region
+  const liveStatus = isLoading ? 'Writing your message…' : error ? error : hasMessage ? 'Your message is ready.' : '';
+
   return (
-    <div className="preview-card bg-white rounded-3xl p-10 h-full flex flex-col">
-      <h2 className="text-xl font-bold text-gray-900 mb-2 flex-shrink-0">Generated Message</h2>
-      <p className="text-[var(--card-subtitle)]">Your AI-powered professional message will appear here</p>
-      <div className="flex-1 overflow-y-auto mt-6">
+    <div ref={paneRef} className="flex scroll-mt-4 flex-col">
+      <h2 className="text-title font-semibold text-slate">Your message</h2>
+      <p className="sr-only" aria-live="polite">
+        {liveStatus}
+      </p>
+
+      {/* The brief summary, or an invitation when the brief is empty */}
+      <p className={`mt-4 max-w-[40ch] text-title leading-snug ${summary ? 'text-slate' : 'text-muted'}`}>
+        {summary ?? 'Fill in the brief and your message appears here.'}
+      </p>
+
+      <div className="mt-6 border-t border-line pt-6">
         {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Generating message...</span>
+          <div aria-hidden="true">
+            <p className="mb-5 text-muted">Writing your message…</p>
+            <div className="max-w-[65ch] space-y-3 motion-safe:animate-pulse">
+              {['w-1/3', 'w-full', 'w-11/12', 'w-full', 'w-4/5', 'w-2/3'].map((width, i) => (
+                <div key={i} className={`h-3 rounded-full bg-canvas ${width}`} />
+              ))}
+            </div>
           </div>
-        ) : generatedMessage || error ? (
-          <div className="prose max-w-none">
-            {!error ? (
-              <Fragment>
-                <div className={displayMessageStyles}>{generatedMessage}</div>
-                <Button type="button" className="w-30 mt-2 ml-2" size="sm" variant="outline" onClick={handleCopyClick}>
-                  {isCopied ? 'Copied!' : 'Copy'}
-                </Button>
-              </Fragment>
-            ) : (
-              <div className={displayMessageStyles}>{error}</div>
-            )}
-          </div>
+        ) : error ? (
+          <p className="max-w-[65ch] text-error">{error}</p>
+        ) : hasMessage ? (
+          // Keyed by message so the arrival animation plays once per new message, not on re-renders
+          <MessageBody key={generatedMessage} message={generatedMessage} copyStatus={copyStatus} onCopy={handleCopyClick} />
         ) : (
-          <div className="italic py-8 text-center">
-            <div className="preview-icon mb-5 opacity-50 text-[80px]">📧</div>
-            <h3 className="text-black text-xl font-semibold">No message yet</h3>
-            <p className="text-gray-500">
-              Fill out the form and click &quot;Generate Message&quot; to create your personalized introduction.
-            </p>
-          </div>
+          <p className="max-w-[48ch] text-muted">
+            {summary
+              ? 'When the summary looks right, select Write my message.'
+              : 'As you fill it in, a summary of your message shows here so you can check it before writing.'}
+          </p>
         )}
+      </div>
+    </div>
+  );
+};
+
+const MessageBody: React.FC<{ message: string; copyStatus: CopyStatus; onCopy: () => void }> = ({ message, copyStatus, onCopy }) => {
+  const { words, readTime } = getMessageStats(message);
+  const paragraphs = message.trim().split(/\n\s*\n/);
+
+  return (
+    <div>
+      <div className={`${displayMessageStyles} space-y-[1.7em]`}>
+        {paragraphs.map((paragraph, i) => (
+          // Stagger capped so long messages still settle within about half a second
+          <p key={i} className="message-arrive" style={{ animationDelay: `${Math.min(i * 60, 240)}ms` }}>
+            {paragraph}
+          </p>
+        ))}
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4">
+        <p className="text-meta text-muted">
+          {words} words, {readTime}
+        </p>
+        <div className="ml-auto flex items-center gap-3">
+          <span className={`text-meta ${copyStatus === 'failed' ? 'text-error' : 'text-muted'}`} aria-live="polite">
+            {copyStatus === 'copied' && 'Copied'}
+            {copyStatus === 'failed' && "Couldn't copy. Select the text and copy it yourself."}
+          </span>
+          <Button type="button" size="sm" variant="outline" onClick={onCopy}>
+            Copy message
+          </Button>
+        </div>
       </div>
     </div>
   );

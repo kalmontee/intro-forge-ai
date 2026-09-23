@@ -7,5 +7,8 @@ export type { TextareaProps } from './textarea';
 export { Select } from './select';
 export type { SelectProps } from './select';
 
+export { RadioGroup } from './radio-group';
+export type { RadioGroupProps } from './radio-group';
+
 export { Button } from './button';
 export type { ButtonProps } from './button';

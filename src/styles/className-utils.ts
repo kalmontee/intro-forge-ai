@@ -1,34 +1,46 @@
 // Shared className utilities for consistent styling across components
 
-// Base form input styles
+// Base form control styles
 export const baseInputStyles = [
-  'w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm text-[14px] text-black',
-  'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-  'disabled:bg-gray-50 disabled:text-gray-500',
+  'w-full rounded-field border bg-surface px-3 text-ui text-slate transition-colors',
+  'focus-visible:outline-2 focus-visible:outline-offset-1',
+  'disabled:bg-canvas disabled:text-muted',
 ].join(' ');
 
-// Error state styles
-export const errorInputStyles = 'border-red-500 focus:border-red-500 focus:ring-red-500';
-export const errorTextStyles = 'text-sm text-red-600';
+// Border and focus colors: exactly one of these is applied so they never compete
+export const validInputStyles = 'border-field hover:border-muted focus-visible:border-forge focus-visible:outline-forge';
+export const errorInputStyles = 'border-error focus-visible:outline-error';
+export const errorTextStyles = 'text-meta text-error';
 
-export const labelStyles = 'block text-sm text-[var(--label)] font-semibold text-gray-700';
-export const fieldContainerStyles = 'space-y-2';
-export const placeholderStyles = 'placeholder-gray-400 placeholder:text-xs';
-export const bulletListItemStyles = "pl-5 relative relative pl-6 before:content-['•'] before:absolute before:left-2 before:font-bold";
-export const displayMessageStyles = 'whitespace-pre-wrap text-gray-800 bg-gray-50 p-4 rounded-md overflow-y-auto max-h-full';
+export const labelStyles = 'block text-ui font-medium text-slate';
+export const hintTextStyles = 'text-meta text-muted';
+export const fieldContainerStyles = 'space-y-1.5';
+export const placeholderStyles = 'placeholder:text-muted';
+export const displayMessageStyles = 'whitespace-pre-wrap text-body leading-[1.7] text-slate max-w-[65ch]';
 
 // Utility function to combine base styles with conditional error styles
 export const getInputStyles = (error?: string, additionalClasses?: string) => {
   const baseClasses = `${baseInputStyles} ${placeholderStyles}`;
-  const errorClasses = error ? errorInputStyles : '';
+  const stateClasses = error ? errorInputStyles : validInputStyles;
   const extraClasses = additionalClasses || '';
 
-  return `${baseClasses} ${errorClasses} ${extraClasses}`.trim();
+  return `${baseClasses} ${stateClasses} ${extraClasses}`.trim();
 };
 
 // Utility function for consistent form field structure classes
 export const getFieldStyles = () => ({
   container: fieldContainerStyles,
   label: labelStyles,
+  hint: hintTextStyles,
   error: errorTextStyles,
 });
+
+// Accessibility attributes that link a control to its hint and error message
+export const getDescriptionA11yProps = (id: string | undefined, error?: string, hint?: string) => {
+  const describedBy = id ? [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') : '';
+
+  return {
+    'aria-invalid': error ? true : undefined,
+    'aria-describedby': describedBy || undefined,
+  };
+};
