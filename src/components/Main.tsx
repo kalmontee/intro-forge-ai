@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from 'react';
 import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
-import { IntroForgeFormData } from '@/types/form';
+import type { IntroBrief } from '@/lib/intro-request-fields';
 import { EMPTY_FORM, clearSavedForm, loadSavedForm } from '@/lib/form-storage';
 import { Button } from './ui';
 
@@ -15,7 +15,7 @@ export const Main: FC = () => {
   // Saved values are read after mount, not during render: the server renders empty fields,
   // and React won't patch a mismatched select or radio during hydration.
   // Bumping formKey remounts the form so it takes new initial values (after loading or clearing).
-  const [initialFormValues, setInitialFormValues] = useState<IntroForgeFormData>(EMPTY_FORM);
+  const [initialFormValues, setInitialFormValues] = useState<IntroBrief>(EMPTY_FORM);
   const [formKey, setFormKey] = useState(0);
   const [clearedNotice, setClearedNotice] = useState(false);
 
@@ -33,10 +33,10 @@ export const Main: FC = () => {
   };
 
   // Live values drive the draft pane's summary; the submitted ones label the finished message
-  const [brief, setBrief] = useState<IntroForgeFormData>(EMPTY_FORM);
-  const [submittedBrief, setSubmittedBrief] = useState<IntroForgeFormData | null>(null);
+  const [brief, setBrief] = useState<IntroBrief>(EMPTY_FORM);
+  const [submittedBrief, setSubmittedBrief] = useState<IntroBrief | null>(null);
 
-  const handleFormSubmit = async (data: IntroForgeFormData) => {
+  const handleFormSubmit = async (data: IntroBrief) => {
     setIsLoading(true);
     setAiResponse('');
     setErrorMessage(null);

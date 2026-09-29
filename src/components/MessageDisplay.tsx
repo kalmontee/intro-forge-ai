@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './ui';
 import { displayMessageStyles } from '@/styles/className-utils';
 import { describeBrief, getMessageStats } from '@/lib/message-meta';
-import { IntroForgeFormData } from '@/types/form';
+import type { IntroBrief } from '@/lib/intro-request-fields';
 
 type CopyStatus = 'idle' | 'copied' | 'failed';
 
@@ -12,7 +12,7 @@ export const MessageDisplay: React.FC<{
   generatedMessage: string;
   isLoading: boolean;
   error: string | null;
-  brief: IntroForgeFormData;
+  brief: IntroBrief;
 }> = ({ generatedMessage, isLoading, error, brief }) => {
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
   const paneRef = useRef<HTMLDivElement>(null);

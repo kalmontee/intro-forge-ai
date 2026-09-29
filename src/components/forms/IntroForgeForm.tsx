@@ -2,8 +2,12 @@
 
 import React, { useCallback } from 'react';
 import FormController from './FormController';
-import { FormField, FormData, IntroForgeFormData, IntroForgeFormProps } from '../../types/form';
-import { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from '@/lib/intro-request-fields';
+import { FormField, FormData, IntroForgeFormProps } from '../../types/form';
+import { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS, validateBrief, type IntroBrief } from '@/lib/intro-request-fields';
+
+// Delegates one field's validation to validateBrief, the same rules the
+// server enforces, so the client never shows different wording for the same rule.
+const fieldError = (name: keyof IntroBrief, value: string): string | undefined => validateBrief({ [name]: value })[name]?.[0];
 
 // The shared option labels are Title Case because the prompt uses them; the form shows sentence case
 const toSentenceCase = ({ value, label }: { value: string; label: string }) => ({
@@ -20,12 +24,7 @@ const introForgeFields: FormField[] = [
     required: true,
     section: 'From you',
     maxLength: FIELD_LIMITS.name,
-    validation: (value: string) => {
-      if (value.length < 2) {
-        return 'Enter at least 2 characters for your name';
-      }
-      return undefined;
-    },
+    validation: (value: string) => fieldError('name', value),
   },
   {
     name: 'selfIntroduction',
@@ -45,12 +44,7 @@ const introForgeFields: FormField[] = [
     required: true,
     section: 'To whom',
     maxLength: FIELD_LIMITS.recipient,
-    validation: (value: string) => {
-      if (value.length < 2) {
-        return "Enter at least 2 characters for the recipient's name";
-      }
-      return undefined;
-    },
+    validation: (value: string) => fieldError('recipient', value),
   },
   {
     name: 'role',
@@ -100,7 +94,7 @@ const introForgeFields: FormField[] = [
 ];
 
 // Map the generic FormData to our specific type
-const toIntroForgeData = (data: FormData): IntroForgeFormData => ({
+const toIntroForgeData = (data: FormData): IntroBrief => ({
   name: data.name,
   selfIntroduction: data.selfIntroduction,
   role: data.role,

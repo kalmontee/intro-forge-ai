@@ -1,4 +1,4 @@
-import type { IntroForgeFormData } from '@/types/form';
+import { EMPTY_BRIEF, type BriefFieldName, type IntroBrief } from '@/lib/intro-request-fields';
 
 // Persists the intro form in localStorage, in this browser only. Every access
 // is wrapped so private mode, disabled storage or a full quota degrade to "not
@@ -6,29 +6,11 @@ import type { IntroForgeFormData } from '@/types/form';
 
 export const STORAGE_PREFIX = 'introForge:';
 
-export const FORM_FIELD_NAMES = [
-  'name',
-  'selfIntroduction',
-  'role',
-  'company',
-  'recipient',
-  'messageType',
-  'tone',
-  'additionalContext',
-] as const satisfies readonly (keyof IntroForgeFormData)[];
+export const FORM_FIELD_NAMES = Object.keys(EMPTY_BRIEF) as readonly BriefFieldName[];
 
 export type FormStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem' | 'key' | 'length'>;
 
-export const EMPTY_FORM: IntroForgeFormData = {
-  name: '',
-  selfIntroduction: '',
-  role: '',
-  company: '',
-  recipient: '',
-  messageType: '',
-  tone: '',
-  additionalContext: '',
-};
+export const EMPTY_FORM: IntroBrief = EMPTY_BRIEF;
 
 const storageKey = (field: string) => `${STORAGE_PREFIX}${field}`;
 
@@ -56,7 +38,7 @@ function migrateLegacyKeys(storage: FormStorage): void {
   }
 }
 
-export function loadSavedForm(storage: FormStorage | null = browserStorage()): IntroForgeFormData {
+export function loadSavedForm(storage: FormStorage | null = browserStorage()): IntroBrief {
   if (!storage) return { ...EMPTY_FORM };
 
   try {

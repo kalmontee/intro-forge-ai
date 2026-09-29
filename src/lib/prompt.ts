@@ -1,5 +1,5 @@
 import type { IntroRequest } from './intro-request';
-import { MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from './intro-request-fields';
+import { BRIEF_FIELDS, type BriefFieldName, type ChoiceBriefField, type TextBriefField } from './intro-request-fields';
 
 const TONE_GUIDANCE: Record<IntroRequest['tone'], string> = {
   formal: 'polished and business-like',
@@ -30,17 +30,13 @@ export function stripDelimiters(value: string): string {
 const labelFor = (options: readonly { value: string; label: string }[], value: string) =>
   options.find(option => option.value === value)?.label ?? value;
 
+// Field order and labels come from BRIEF_FIELDS (./intro-request-fields), the
+// same table the zod schema and validateBrief are built from.
 export function buildUserPrompt(data: IntroRequest): string {
-  const fields: [string, string][] = [
-    ['From', data.name],
-    ['Self-introduction', data.selfIntroduction],
-    ['Target role', data.role],
-    ['Target company', data.company],
-    ['Recipient', data.recipient],
-    ['Message type', labelFor(MESSAGE_TYPE_OPTIONS, data.messageType)],
-    ['Tone', labelFor(TONE_OPTIONS, data.tone)],
-    ['Additional context', data.additionalContext],
-  ];
+  const fields: [string, string][] = (Object.values(BRIEF_FIELDS) as (TextBriefField | ChoiceBriefField)[]).map(field => {
+    const value = data[field.name as BriefFieldName];
+    return [field.promptLabel ?? field.label, field.kind === 'choice' ? labelFor(field.options, value) : value];
+  });
 
   const body = fields
     .filter(([, value]) => value !== '')

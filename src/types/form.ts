@@ -1,3 +1,5 @@
+import type { IntroBrief } from '@/lib/intro-request-fields';
+
 export interface FormField {
   name: string;
   label: string;
@@ -29,20 +31,9 @@ export interface FormControllerProps {
   loading?: boolean;
 }
 
-export interface IntroForgeFormData {
-  name: string;
-  selfIntroduction: string;
-  role: string;
-  company: string;
-  recipient: string;
-  messageType: string;
-  tone: string;
-  additionalContext?: string;
-}
-
 export interface IntroForgeFormProps {
-  onSubmit: (data: IntroForgeFormData) => void | Promise<void>;
-  onValuesChange?: (data: IntroForgeFormData) => void;
+  onSubmit: (data: IntroBrief) => void | Promise<void>;
+  onValuesChange?: (data: IntroBrief) => void;
   loading?: boolean;
-  initialValues?: Partial<IntroForgeFormData>;
+  initialValues?: Partial<IntroBrief>;
 }
