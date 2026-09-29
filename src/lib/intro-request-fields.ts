@@ -85,6 +85,8 @@ export const EMPTY_BRIEF: IntroBrief = {
 export function validateBrief(values: Partial<Record<BriefFieldName, string>>): Record<string, string[]> {
   const errors: Record<string, string[]> = {};
 
+  // Object.values widens the `as const satisfies` union back to BriefField;
+  // the cast just restates what BRIEF_FIELDS's own type already guarantees.
   for (const field of Object.values(BRIEF_FIELDS) as BriefField[]) {
     const value = (values[field.name as BriefFieldName] ?? '').trim();
 

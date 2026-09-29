@@ -16,6 +16,8 @@ export interface UseBriefFormResult {
 export function useBriefForm(storage: FormStorage | null = browserStorage()): UseBriefFormResult {
   const [state, dispatch] = useReducer(briefFormReducer, initialBriefFormState);
 
+  // Runs once on mount, not during render: the server renders empty fields,
+  // and React won't patch a mismatched select or radio during hydration.
   useEffect(() => {
     dispatch({ type: 'load', values: loadSavedForm(storage) });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -33,6 +33,8 @@ const labelFor = (options: readonly { value: string; label: string }[], value: s
 // Field order and labels come from BRIEF_FIELDS (./intro-request-fields), the
 // same table the zod schema and validateBrief are built from.
 export function buildUserPrompt(data: IntroRequest): string {
+  // Same widening as validateBrief's cast in ./intro-request-fields: Object.values
+  // loses the union BRIEF_FIELDS's own type already guarantees each entry has.
   const fields: [string, string][] = (Object.values(BRIEF_FIELDS) as (TextBriefField | ChoiceBriefField)[]).map(field => {
     const value = data[field.name as BriefFieldName];
     return [field.promptLabel ?? field.label, field.kind === 'choice' ? labelFor(field.options, value) : value];
