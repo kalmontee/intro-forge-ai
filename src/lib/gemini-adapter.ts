@@ -5,9 +5,19 @@ import {
   GoogleGenerativeAIResponseError,
 } from '@google/generative-ai';
 import type { IntroRequest } from './intro-request';
-import { GENERATION_TIMEOUT_MS, MAX_OUTPUT_TOKENS, SYSTEM_INSTRUCTION, buildUserPrompt } from './prompt';
+import { SYSTEM_INSTRUCTION, buildUserPrompt } from './prompt';
 
 const MODEL_NAME = 'gemini-3-flash-preview';
+
+// Upper bound on generated tokens. Gemini 3 models count thinking tokens
+// against this limit, so it leaves headroom above the length of a cover letter.
+export const MAX_OUTPUT_TOKENS = 2048;
+
+// Abort the Gemini call after this long so a stalled upstream cannot hold the
+// function open. gemini-3-flash-preview measured 8-38 s per message
+// (2026-09-22), mostly upstream queueing rather than thinking, so a tighter
+// bound would cut off ordinary requests.
+export const GENERATION_TIMEOUT_MS = 60_000;
 
 export type GenerationErrorKind = 'timeout' | 'rate_limited' | 'upstream_unavailable' | 'no_output';
 

@@ -1,16 +1,6 @@
 import type { IntroRequest } from './intro-request';
 import { MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from './intro-request-fields';
 
-// Upper bound on generated tokens. Gemini 3 models count thinking tokens
-// against this limit, so it leaves headroom above the length of a cover letter.
-export const MAX_OUTPUT_TOKENS = 2048;
-
-// Abort the Gemini call after this long so a stalled upstream cannot hold the
-// function open. gemini-3-flash-preview measured 8-38 s per message
-// (2026-09-22), mostly upstream queueing rather than thinking, so a tighter
-// bound would cut off ordinary requests.
-export const GENERATION_TIMEOUT_MS = 60_000;
-
 const TONE_GUIDANCE: Record<IntroRequest['tone'], string> = {
   formal: 'polished and business-like',
   casual: 'friendly and approachable',
