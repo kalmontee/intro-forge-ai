@@ -1,18 +1,13 @@
-import { IntroForgeFormData } from '@/types/form';
+import type { IntroBrief } from '@/lib/intro-request-fields';
+import { MESSAGE_TYPE_OPTIONS } from '@/lib/intro-request-fields';
 
-const messageTypeNames: Record<string, string> = {
-  cold_message: 'cold message',
-  follow_up: 'follow-up',
-  introduction: 'introduction',
-  job_inquiry: 'job inquiry',
-  cover_letter: 'cover letter',
-};
+const messageTypeNames: Record<string, string> = Object.fromEntries(MESSAGE_TYPE_OPTIONS.map(option => [option.value, option.phrase]));
 
 const withArticle = (phrase: string) => `${/^[aeiou]/i.test(phrase) ? 'An' : 'A'} ${phrase}`;
 
 // One-line summary of the brief, e.g. "A casual cold message to Sarah about the Designer role at Stripe".
 // Returns null until there is something worth summarising.
-export const describeBrief = (brief: Partial<IntroForgeFormData>): string | null => {
+export const describeBrief = (brief: Partial<IntroBrief>): string | null => {
   const tone = brief.tone?.trim();
   const type = messageTypeNames[brief.messageType ?? ''] ?? 'message';
   const recipient = brief.recipient?.trim();

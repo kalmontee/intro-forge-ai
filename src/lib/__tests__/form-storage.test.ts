@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { EMPTY_FORM, FormStorage, STORAGE_PREFIX, clearSavedForm, loadSavedForm, saveField } from '@/lib/form-storage';
+import { EMPTY_FORM, FORM_FIELD_NAMES, FormStorage, STORAGE_PREFIX, clearSavedForm, loadSavedForm, saveField } from '@/lib/form-storage';
+import { BRIEF_FIELDS } from '@/lib/intro-request-fields';
 
 // In-memory Storage with the same key()/length semantics as localStorage.
 class MemoryStorage implements FormStorage {
@@ -51,6 +52,20 @@ const throwingStorage: FormStorage = {
     throw new Error('SecurityError');
   },
 };
+
+describe('FORM_FIELD_NAMES', () => {
+  it('is derived from the intro brief field table, so a new field is picked up without a storage code change', () => {
+    expect(FORM_FIELD_NAMES).toEqual(Object.keys(BRIEF_FIELDS));
+  });
+
+  it('round-trips every field in the table', () => {
+    const storage = new MemoryStorage();
+    for (const field of FORM_FIELD_NAMES) saveField(field, `${field}-value`, storage);
+
+    const loaded = loadSavedForm(storage);
+    for (const field of FORM_FIELD_NAMES) expect(loaded[field]).toBe(`${field}-value`);
+  });
+});
 
 describe('saveField and loadSavedForm', () => {
   it('round-trips values under prefixed keys', () => {

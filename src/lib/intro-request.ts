@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS } from './intro-request-fields';
+import { BRIEF_FIELDS, FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS, type ChoiceBriefField, type TextBriefField } from './intro-request-fields';
 
 export { FIELD_LIMITS, MESSAGE_TYPE_OPTIONS, TONE_OPTIONS };
 
@@ -16,33 +16,40 @@ const toValues = <T extends readonly { value: string }[]>(options: T) => options
 const text = (label: string) =>
   z.string({ error: issue => (issue.input === undefined ? `${label} is required` : `${label} must be text`) });
 
-const requiredText = (label: string, max: number, min = 1) =>
-  text(label).pipe(
+// Every rule and message below reads from BRIEF_FIELDS (in ./intro-request-fields),
+// the same table validateBrief uses client-side, so the two can't drift apart.
+const requiredText = (field: TextBriefField) => {
+  const min = field.min ?? 1;
+  return text(field.label).pipe(
     z
       .string()
       .trim()
-      .min(min, min > 1 ? `${label} must be at least ${min} characters long` : `${label} is required`)
-      .max(max, `${label} must be at most ${max} characters`)
+      .min(min, min > 1 ? `${field.label} must be at least ${min} characters long` : `${field.label} is required`)
+      .max(field.max, `${field.label} must be at most ${field.max} characters`)
   );
+};
 
-const optionalText = (label: string, max: number) =>
-  text(label)
-    .pipe(z.string().trim().max(max, `${label} must be at most ${max} characters`))
+const optionalText = (field: TextBriefField) =>
+  text(field.label)
+    .pipe(z.string().trim().max(field.max, `${field.label} must be at most ${field.max} characters`))
     .optional()
     .default('');
 
 const choiceError = (label: string, input: unknown) =>
   input === undefined || input === '' ? `${label} is required` : `${label} is not supported`;
 
+const choice = (field: ChoiceBriefField) =>
+  z.enum(toValues(field.options), { error: issue => choiceError(field.label, issue.input) });
+
 export const introRequestSchema = z.object({
-  name: requiredText('Name', FIELD_LIMITS.name, 2),
-  selfIntroduction: requiredText('Self-introduction', FIELD_LIMITS.selfIntroduction),
-  role: requiredText('Role', FIELD_LIMITS.role),
-  company: optionalText('Company', FIELD_LIMITS.company),
-  recipient: requiredText('Recipient', FIELD_LIMITS.recipient, 2),
-  messageType: z.enum(toValues(MESSAGE_TYPE_OPTIONS), { error: issue => choiceError('Message type', issue.input) }),
-  tone: z.enum(toValues(TONE_OPTIONS), { error: issue => choiceError('Tone', issue.input) }),
-  additionalContext: optionalText('Additional context', FIELD_LIMITS.additionalContext),
+  name: requiredText(BRIEF_FIELDS.name),
+  selfIntroduction: requiredText(BRIEF_FIELDS.selfIntroduction),
+  role: requiredText(BRIEF_FIELDS.role),
+  company: optionalText(BRIEF_FIELDS.company),
+  recipient: requiredText(BRIEF_FIELDS.recipient),
+  messageType: choice(BRIEF_FIELDS.messageType),
+  tone: choice(BRIEF_FIELDS.tone),
+  additionalContext: optionalText(BRIEF_FIELDS.additionalContext),
 });
 
 export type IntroRequest = z.infer<typeof introRequestSchema>;
