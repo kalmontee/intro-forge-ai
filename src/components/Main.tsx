@@ -5,6 +5,7 @@ import { IntroForgeForm } from './forms';
 import { MessageDisplay } from './MessageDisplay';
 import type { IntroBrief } from '@/lib/intro-request-fields';
 import { EMPTY_FORM, clearSavedForm, loadSavedForm } from '@/lib/form-storage';
+import { requestMessage } from '@/lib/message-request';
 import { Button } from './ui';
 
 export const Main: FC = () => {
@@ -42,44 +43,13 @@ export const Main: FC = () => {
     setErrorMessage(null);
     setSubmittedBrief(data);
 
-    let response: Response;
-    try {
-      response = await fetch('/api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-    } catch (error) {
-      console.error('Error reaching the API:', error);
-      setErrorMessage("Couldn't reach the server. Check your connection, then try again.");
-      setIsLoading(false);
-      return;
+    const result = await requestMessage(data);
+    if (result.ok) {
+      setAiResponse(result.message);
+    } else {
+      setErrorMessage(result.error);
     }
-
-    try {
-      if (!response.ok) {
-        // The API returns client-safe messages (see src/lib/api-errors.ts) and per-field validation errors
-        const errorData: { error?: string; fieldErrors?: Record<string, string[]> } = await response.json().catch(() => ({}));
-        console.error('API Error:', errorData);
-        const fieldMessages = Object.values(errorData.fieldErrors ?? {}).flat();
-        setErrorMessage(
-          fieldMessages.length > 0
-            ? `${fieldMessages.join('. ')}.`
-            : errorData.error || `Couldn't write your message (the server returned ${response.status}). Try again in a moment.`
-        );
-        return;
-      }
-
-      const result = await response.json();
-      setAiResponse(result.output);
-    } catch (error) {
-      console.error('Error generating message:', error);
-      setErrorMessage("Couldn't read the server's response. Try again in a moment.");
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
   return (
     <main className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] bg-surface rounded-surface shadow-surface">

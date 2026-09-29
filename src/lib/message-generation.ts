@@ -2,8 +2,9 @@ import { GENERATION_UNAVAILABLE, toErrorResponse } from './api-errors';
 import type { Generator } from './gemini-adapter';
 import { parseIntroRequest } from './intro-request';
 import { isAllowedOrigin, isJsonContentType } from './origin';
+import type { MessageGenerationResponseBody } from '@/types/message-response';
 
-function json(status: number, body: unknown): Response {
+function json(status: number, body: MessageGenerationResponseBody): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 }
 
